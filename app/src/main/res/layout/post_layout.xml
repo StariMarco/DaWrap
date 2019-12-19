@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="5dp"
+    android:clipToPadding="false">
+
+    <!--POST-->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        android:layout_gravity="center_horizontal"
+        app:cardElevation="3dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!--                User info + share-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+                <com.alexzh.circleimageview.CircleImageView
+                    android:id="@+id/profileImg"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_person_black"
+                    />
+                <TextView
+                    android:id="@+id/lblUsername"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/colorTextPrimary" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageButton
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_share_right_black"
+                        android:scaleType="fitXY"
+                        android:background="@null"
+                        android:layout_alignParentRight="true"
+                        android:padding="5dp" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <!--                Title-->
+            <TextView
+                android:id="@+id/lblTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="@string/test_Title"
+                android:textSize="@dimen/fontSizeTitle"
+                android:textStyle="bold"
+                app:fontFamily="@font/roboto"
+                android:textColor="@color/colorTextPrimary"
+                android:layout_marginBottom="5dp"/>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:rowCount="3"
+                android:columnCount="1">
+                <!--                Image-->
+                <ImageView
+                    android:id="@+id/postImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:maxHeight="350dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    android:layout_gravity="fill"/>
+
+                <!--                Description-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_row="1"
+                    android:layout_column="0">
+                    <CustomViews.GradientTextView
+                        android:id="@+id/lblDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="10dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextSecondary"
+                        android:lineSpacingExtra="3dp"
+                        android:maxLines="10" />
+                </LinearLayout>
+
+                <!--                Like + Comment + Save-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp"
+                    android:layout_row="2"
+                    android:layout_column="0">
+
+                    <ImageButton
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_favorite_border_black"
+                        android:background="@null"
+                        android:scaleType="fitXY"
+                        android:padding="5dp"/>
+                    <ImageButton
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_mode_comment_black"
+                        android:background="@null"
+                        android:scaleType="fitXY"
+                        android:padding="5dp"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <ImageButton
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_bookmark_black"
+                            android:scaleType="fitXY"
+                            android:background="@null"
+                            android:layout_alignParentRight="true"
+                            android:padding="5dp"/>
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </GridLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
