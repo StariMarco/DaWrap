@@ -1,5 +1,6 @@
 package com.example.dawrap;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +33,18 @@ public class HomeFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
 
+        shapeBackground(view);
+
         postListViewSetup(view);
+    }
+
+    private void shapeBackground(@NonNull View view)
+    {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            view.findViewById(R.id.postBackground).setBackgroundResource(R.drawable.post_backgroung_shape);
+            view.findViewById(R.id.postListView).setBackgroundResource(R.drawable.post_backgroung_shape);
+        }
     }
 
     private void postListViewSetup(View view)

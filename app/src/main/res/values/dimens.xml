@@ -3,4 +3,5 @@
     <dimen name="fontSizeTitle">18sp</dimen>
     <dimen name="fontSizeNormal">15sp</dimen>
     <dimen name="fontSizeSmall">12sp</dimen>
+    <dimen name="shr_product_grid_reveal_height">100dp</dimen>
 </resources>

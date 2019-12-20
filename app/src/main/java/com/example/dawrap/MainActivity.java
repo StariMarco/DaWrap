@@ -1,13 +1,17 @@
 package com.example.dawrap;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.animation.AccelerateDecelerateInterpolator;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import Models.NavigationIconClickListener;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -19,10 +23,26 @@ public class MainActivity extends AppCompatActivity
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
+        setupToolbar();
+
         if(savedInstanceState == null)
         {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         }
+    }
+
+    private void setupToolbar()
+    {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        AppCompatActivity activity = this;
+
+        activity.setSupportActionBar(toolbar);
+
+        toolbar.setNavigationOnClickListener(new NavigationIconClickListener(getApplicationContext(),
+                findViewById(R.id.fragment_container),
+                new AccelerateDecelerateInterpolator(),
+                getApplicationContext().getResources().getDrawable(R.drawable.ic_dehaze_white_24dp),
+                getApplicationContext().getResources().getDrawable(R.drawable.ic_close_white_24dp)));
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener()

@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.dawrap.R;
 
+@SuppressLint("AppCompatCustomView")
 public class GradientTextView extends TextView
 {
     public GradientTextView(Context context)
@@ -29,6 +30,7 @@ public class GradientTextView extends TextView
         super(context, attrs, defStyleAttr);
     }
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom)
     {
