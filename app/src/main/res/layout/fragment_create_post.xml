@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/blue">
+    android:background="@drawable/post_backgroung_shape">
 
     <TextView
         android:layout_width="wrap_content"
@@ -9,7 +9,7 @@
         android:text="Create Post"
         android:textSize="@dimen/fontSizeTitle"
         android:layout_centerInParent="true"
-        android:textColor="@color/white"
+        android:textColor="@color/colorTextPrimary"
         android:fontFamily="@font/roboto_medium"/>
 
 </RelativeLayout>

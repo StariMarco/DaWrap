@@ -3,15 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:clipToPadding="false"
-    android:clipChildren="false"
+    android:clipToPadding="true"
     app:cardPreventCornerOverlap="false"
-    app:cardElevation="8dp"
-    android:id="@+id/postBackground">
+    app:cardElevation="3dp"
+    android:id="@+id/postBackground"
+    android:paddingBottom="20dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/postListView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:paddingBottom="5dp"
+            android:clipToPadding="true"/>
 
 </androidx.cardview.widget.CardView>

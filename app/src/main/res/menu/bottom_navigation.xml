@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/nav_home"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="Home"/>
+        android:icon="@drawable/ic_home_white_24dp"
+        android:title="Home"
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/nav_new_post"
         android:icon="@drawable/ic_create_white_24dp"
-        android:title="New Post"/>
+        android:title="New Post"
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/nav_user_profile"
-        android:icon="@drawable/ic_person_black_24dp"
-        android:title="Profile"/>
+        android:icon="@drawable/ic_person_white_24dp"
+        android:title="Profile"
+        app:showAsAction="always"/>
 
 </menu>

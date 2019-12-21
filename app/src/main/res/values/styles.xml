@@ -15,4 +15,9 @@
         <item name="android:background">@color/gray</item>
     </style>
 
+    <style name="backdrop_button" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
 </resources>

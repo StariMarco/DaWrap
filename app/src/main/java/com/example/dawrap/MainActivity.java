@@ -1,48 +1,84 @@
 package com.example.dawrap;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import Models.NavigationIconClickListener;
 
 public class MainActivity extends AppCompatActivity
 {
+    private LinearLayout mView;
+    private int height = 0;
+    private boolean[] backdropActive = {false};
+    private View createPostView;
+
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        fullScreencall();
+
+        setupBottomNavigation(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume()
+    {
+//        fullScreencall();
+        super.onResume();
+    }
+
+    private void setupBottomNavigation(Bundle savedInstanceState)
+    {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
-        setupToolbar();
-
+        // Seth home fragment as default onCreate
         if(savedInstanceState == null)
         {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         }
+
+        setupBackdrop(bottomNav);
     }
 
-    private void setupToolbar()
+    private void setupBackdrop(BottomNavigationView bottomNavigationView)
     {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        AppCompatActivity activity = this;
+        final View createPostItem = bottomNavigationView.findViewById(R.id.nav_new_post);
+        mView = findViewById(R.id.backdrop_content);
+        createPostView = createPostItem;
 
-        activity.setSupportActionBar(toolbar);
+        createPostItem.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener()
+        {
+            @Override
+            public void onGlobalLayout()
+            {
+                height = mView.getHeight();
+                createPostItem.setOnClickListener(new NavigationIconClickListener(getApplicationContext(),
+                        findViewById(R.id.fragment_container),
+                        new AccelerateDecelerateInterpolator(),
+                        getApplicationContext().getResources().getDrawable(R.drawable.ic_create_white_24dp),
+                        getApplicationContext().getResources().getDrawable(R.drawable.ic_close_white_24dp),
+                        -height,
+                        (BottomNavigationItemView) createPostItem,
+                        backdropActive));
 
-        toolbar.setNavigationOnClickListener(new NavigationIconClickListener(getApplicationContext(),
-                findViewById(R.id.fragment_container),
-                new AccelerateDecelerateInterpolator(),
-                getApplicationContext().getResources().getDrawable(R.drawable.ic_dehaze_white_24dp),
-                getApplicationContext().getResources().getDrawable(R.drawable.ic_close_white_24dp)));
+                createPostItem.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener()
@@ -52,16 +88,27 @@ public class MainActivity extends AppCompatActivity
         {
             Fragment selectedFragment = null;
 
+            // Manage Bottom Navigation items click listeners
             switch (menuItem.getItemId())
             {
                 case R.id.nav_home:
                     selectedFragment = new HomeFragment();
+                    if(backdropActive[0])
+                    {
+                        createPostView.performClick();
+                        backdropActive[0] = false;
+                    }
                     break;
                 case R.id.nav_new_post:
-                    selectedFragment = new CreatePostFragment();
                     break;
                 case R.id.nav_user_profile:
                     selectedFragment = new UserProfileFragment();
+                    if(backdropActive[0])
+                    {
+                        createPostView.performClick();
+                        backdropActive[0] = false;
+                    }
+
                     break;
             }
 
@@ -71,4 +118,16 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
     };
+
+    public void fullScreencall() {
+        if(Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
+            View v = this.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else if(Build.VERSION.SDK_INT >= 19) {
+            //for new api versions.
+            View decorView = getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
+    }
 }
