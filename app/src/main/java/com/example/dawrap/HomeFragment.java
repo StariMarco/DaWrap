@@ -1,10 +1,12 @@
 package com.example.dawrap;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,14 +53,25 @@ public class HomeFragment extends Fragment
     {
         RecyclerView postListView = view.findViewById(R.id.postListView);
         System.out.println("id: " + postListView.getId());
-        posts.add(new PostModel("Marco", "Titolo Marco", null, R.drawable.profile_img_test, R.drawable.post_img_test_1));
-        posts.add(new PostModel("Pippo", "Titolo Pippo", getString(R.string.test_description), R.drawable.profile_img_test, null));
-        posts.add(new PostModel("Paolo", "Titolo Paolo", null, R.drawable.profile_img_test, R.drawable.post_img_test_2));
-        posts.add(new PostModel("Rossi", "Titolo Rossi", null, R.drawable.profile_img_test, R.drawable.post_img_test_3));
-        posts.add(new PostModel("Mattia", "Titolo Mattia", "Descrizione Mattia", R.drawable.profile_img_test, null));
+        posts.add(new PostModel("Marco", "Titolo Marco", null, R.drawable.profile_img_test, R.drawable.post_img_test_1, 100));
+        posts.add(new PostModel("Pippo", "Titolo Pippo", getString(R.string.test_description), R.drawable.profile_img_test, null, 5));
+        posts.add(new PostModel("Paolo", "Titolo Paolo", null, R.drawable.profile_img_test, R.drawable.post_img_test_2, 47));
+        posts.add(new PostModel("Rossi", "Titolo Rossi", null, R.drawable.profile_img_test, R.drawable.post_img_test_3, 907));
+        posts.add(new PostModel("Mattia", "Titolo Mattia", "Descrizione Mattia", R.drawable.profile_img_test, null, 16));
 
         PostAdapter adapter = new PostAdapter(posts);
         postListView.setAdapter(adapter);
         postListView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+        adapter.setOnItemClickListener(new PostAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onCommentClick(int position)
+            {
+                Intent i = new Intent(getActivity(), PostCommentsActivity.class);
+                i.putExtra("POST_DATA", posts.get(position));
+                startActivity(i);
+            }
+        });
     }
 }

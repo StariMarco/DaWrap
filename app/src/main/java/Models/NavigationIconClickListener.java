@@ -10,7 +10,9 @@ import android.view.animation.Interpolator;
 
 import androidx.annotation.Nullable;
 
+import com.example.dawrap.R;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
  * {@link android.view.View.OnClickListener} used to translate the product grid sheet downward on
@@ -26,7 +28,7 @@ public class NavigationIconClickListener implements View.OnClickListener {
     private boolean backdropShown = false;
     private Drawable openIcon;
     private Drawable closeIcon;
-    private BottomNavigationItemView menuItem;
+    private BottomNavigationView bottomNavigationView;
     private boolean[] backdropActive;
 
 
@@ -40,13 +42,13 @@ public class NavigationIconClickListener implements View.OnClickListener {
 
     public NavigationIconClickListener(
             Context context, View sheet, @Nullable Interpolator interpolator,
-            @Nullable Drawable openIcon, @Nullable Drawable closeIcon, @Nullable Integer mHeight, BottomNavigationItemView menuItem, boolean[] backdropActive) {
+            @Nullable Drawable openIcon, @Nullable Drawable closeIcon, @Nullable Integer mHeight, BottomNavigationView bottomNavigationView, boolean[] backdropActive) {
         this.context = context;
         this.sheet = sheet;
         this.interpolator = interpolator;
         this.openIcon = openIcon;
         this.closeIcon = closeIcon;
-        this.menuItem = menuItem;
+        this.bottomNavigationView = bottomNavigationView;
         this.backdropActive = backdropActive;
 
 //        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -71,7 +73,7 @@ public class NavigationIconClickListener implements View.OnClickListener {
         final int translateY = height;
 //                context.getResources().getDimensionPixelSize(R.dimen.shr_product_grid_reveal_height);
 
-        ObjectAnimator animator = ObjectAnimator.ofFloat(sheet, "translationY", backdropShown ? translateY : 0);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, backdropShown ? translateY : 0);
         animator.setDuration(500);
         if (interpolator != null) {
             animator.setInterpolator(interpolator);
@@ -83,13 +85,14 @@ public class NavigationIconClickListener implements View.OnClickListener {
     @SuppressLint("RestrictedApi")
     private void updateIcon() {
         if (openIcon != null && closeIcon != null) {
-            if (menuItem == null) {
-                throw new IllegalArgumentException("menuItem is null");
+            BottomNavigationItemView menuItem = bottomNavigationView.findViewById(R.id.nav_new_post);
+            if (bottomNavigationView == null) {
+                throw new IllegalArgumentException("bottomNavigationView is null");
             }
             if (backdropShown) {
-                (menuItem).setIcon(closeIcon);
+                menuItem.setIcon(closeIcon);
             } else {
-                (menuItem).setIcon(openIcon);
+                menuItem.setIcon(openIcon);
             }
         }
     }

@@ -1,14 +1,30 @@
 package com.example.dawrap;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Property;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -24,21 +40,14 @@ public class MainActivity extends AppCompatActivity
     private boolean[] backdropActive = {false};
     private View createPostView;
 
+    AnimatorSet fragmentTransitionAnimatorSet = new AnimatorSet();
+
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        fullScreencall();
-
         setupBottomNavigation(savedInstanceState);
-    }
-
-    @Override
-    protected void onResume()
-    {
-//        fullScreencall();
-        super.onResume();
     }
 
     private void setupBottomNavigation(Bundle savedInstanceState)
@@ -55,7 +64,7 @@ public class MainActivity extends AppCompatActivity
         setupBackdrop(bottomNav);
     }
 
-    private void setupBackdrop(BottomNavigationView bottomNavigationView)
+    private void setupBackdrop(final BottomNavigationView bottomNavigationView)
     {
         final View createPostItem = bottomNavigationView.findViewById(R.id.nav_new_post);
         mView = findViewById(R.id.backdrop_content);
@@ -73,7 +82,7 @@ public class MainActivity extends AppCompatActivity
                         getApplicationContext().getResources().getDrawable(R.drawable.ic_create_white_24dp),
                         getApplicationContext().getResources().getDrawable(R.drawable.ic_close_white_24dp),
                         -height,
-                        (BottomNavigationItemView) createPostItem,
+                        (BottomNavigationView) bottomNavigationView,
                         backdropActive));
 
                 createPostItem.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -87,47 +96,107 @@ public class MainActivity extends AppCompatActivity
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem)
         {
             Fragment selectedFragment = null;
+            BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+
+            if(backdropActive[0])
+                return false;
 
             // Manage Bottom Navigation items click listeners
             switch (menuItem.getItemId())
             {
                 case R.id.nav_home:
-                    selectedFragment = new HomeFragment();
-                    if(backdropActive[0])
-                    {
-                        createPostView.performClick();
-                        backdropActive[0] = false;
-                    }
+                    if(bottomNav.getSelectedItemId() != R.id.nav_home)
+                        selectedFragment = new HomeFragment();
                     break;
                 case R.id.nav_new_post:
                     break;
                 case R.id.nav_user_profile:
-                    selectedFragment = new UserProfileFragment();
-                    if(backdropActive[0])
-                    {
-                        createPostView.performClick();
-                        backdropActive[0] = false;
-                    }
-
+                    if(bottomNav.getSelectedItemId() != R.id.nav_user_profile)
+                        selectedFragment = new UserProfileFragment();
                     break;
             }
 
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+            // Page transition
+            if(selectedFragment != null)
+            {
+                transitionToFragment(getApplicationContext(), selectedFragment, new AccelerateDecelerateInterpolator());
+            }
 
             // Return true = select item
             return true;
         }
     };
 
-    public void fullScreencall() {
-        if(Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
-            View v = this.getWindow().getDecorView();
-            v.setSystemUiVisibility(View.GONE);
-        } else if(Build.VERSION.SDK_INT >= 19) {
-            //for new api versions.
-            View decorView = getWindow().getDecorView();
-            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            decorView.setSystemUiVisibility(uiOptions);
+    private void transitionToFragment(Context context, final Fragment newFragment, @Nullable Interpolator interpolator)
+    {
+        View sheet = findViewById(R.id.fragment_container);
+        int displayHeight = getDisplayHeight(context);
+
+        // dp to pixels
+        float bounceOffset= getPixelsFromDp(20);
+
+        // Cancel the existing animations
+        fragmentTransitionAnimatorSet.removeAllListeners();
+        fragmentTransitionAnimatorSet.end();
+        fragmentTransitionAnimatorSet.cancel();
+
+        // Create the animation
+        ObjectAnimator startBounce = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, bounceOffset);
+        startBounce.setDuration(200);
+        startBounce.setInterpolator(new AccelerateInterpolator());
+
+        ObjectAnimator endBounce = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, 0);
+        endBounce.setDuration(200);
+        endBounce.setInterpolator(new DecelerateInterpolator());
+
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, -displayHeight);
+        fadeOut.setDuration(500);
+        if(interpolator != null)
+            fadeOut.setInterpolator(interpolator);
+        fadeOut.addListener(new AnimatorListenerAdapter()
+        {
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                super.onAnimationEnd(animation);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFragment).commit();
+            }
+        });
+
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, bounceOffset);
+        fadeIn.setDuration(500);
+        if(interpolator != null)
+            fadeIn.setInterpolator(interpolator);
+
+        fragmentTransitionAnimatorSet.play(fadeOut).after(startBounce);
+        fragmentTransitionAnimatorSet.play(fadeOut).before(fadeIn);
+        fragmentTransitionAnimatorSet.play(endBounce).after(fadeIn);
+        fragmentTransitionAnimatorSet.start();
+    }
+
+    private float getPixelsFromDp(float dp)
+    {
+        Resources r = getResources();
+        return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp,
+                r.getDisplayMetrics()
+        );
+    }
+
+    private int getDisplayHeight(Context context)
+    {
+        WindowManager wm = (WindowManager) context.getSystemService(context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        return display.getHeight();
+    }
+
+    private void resetBackdrop()
+    {
+        // Make the content of the page return to the start position
+        if (backdropActive[0])
+        {
+            createPostView.performClick();
         }
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +18,17 @@ import Models.PostModel;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 {
+    public interface OnItemClickListener
+    {
+        void onCommentClick(int position);
+    }
+
+    private OnItemClickListener mListener;
+    public void setOnItemClickListener(OnItemClickListener listener)
+    {
+        mListener = listener;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         public TextView UsenameTextView;
@@ -24,15 +36,34 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         public TextView DescriptionTextView;
         public ImageView ProfileImageView;
         public ImageView PostImageView;
+        public ImageButton CommentBtn;
 
-        public ViewHolder(View itemView)
+        public ViewHolder(View itemView, final OnItemClickListener listener)
         {
             super(itemView);
-            UsenameTextView = (TextView) itemView.findViewById(R.id.lblUsername);
-            TitleTextView = (TextView) itemView.findViewById(R.id.lblTitle);
-            DescriptionTextView = (TextView) itemView.findViewById(R.id.lblDescription);
-            ProfileImageView = (ImageView) itemView.findViewById(R.id.profileImg);
-            PostImageView = (ImageView) itemView.findViewById(R.id.postImage);
+            UsenameTextView = itemView.findViewById(R.id.lblUsername);
+            TitleTextView = itemView.findViewById(R.id.label_title);
+            DescriptionTextView = itemView.findViewById(R.id.label_description);
+            ProfileImageView = itemView.findViewById(R.id.image_profile);
+            PostImageView = itemView.findViewById(R.id.image_post);
+            CommentBtn = itemView.findViewById(R.id.btn_comment);
+
+            // Click listener for comment button
+            CommentBtn.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    if(listener != null)
+                    {
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION)
+                        {
+                            listener.onCommentClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -53,7 +84,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         View postView = inflater.inflate(R.layout.post_layout, parent, false);
 
         // Add click event listener
-            postView.findViewById(R.id.lblDescription).setOnClickListener(new View.OnClickListener()
+            postView.findViewById(R.id.label_description).setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v)
@@ -68,7 +99,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
             });
 
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(postView);
+        ViewHolder viewHolder = new ViewHolder(postView, mListener);
         return viewHolder;
     }
 

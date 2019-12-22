@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PostCommentsActivity"
+    android:clipToPadding="false"
+    android:background="#263238">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/post_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        app:cardElevation="3dp"
+        app:cardCornerRadius="16dp"
+        android:layout_marginTop="-20dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:clipToPadding="false"
+            android:paddingTop="30dp">
+
+            <!--                User info + share-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp">
+                <ImageButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_arrow_back_black_24dp"
+                    android:background="@null"
+                    android:layout_centerVertical="true"
+                    android:onClick="onBackBtnClicked"/>
+                <com.alexzh.circleimageview.CircleImageView
+                    android:id="@+id/image_profile"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/profile_img_test"
+                    android:layout_centerHorizontal="true"/>
+                <ImageButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_reply_black_24dp"
+                    android:scaleX="-1"
+                    android:scaleType="fitXY"
+                    android:background="@null"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:padding="5dp" />
+            </RelativeLayout>
+
+            <!--                Title-->
+            <TextView
+                android:id="@+id/label_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="@string/test_Title"
+                android:textSize="@dimen/fontSizeTitle"
+                android:textStyle="bold"
+                app:fontFamily="@font/roboto"
+                android:textColor="@color/colorTextPrimary"
+                android:layout_marginBottom="5dp"/>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:rowCount="3"
+                android:columnCount="1"
+                android:clipToPadding="false">
+                <!--                Image-->
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:clipToPadding="false"
+                    android:padding="10dp">
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        app:cardElevation="5dp"
+                        android:layout_row="0"
+                        android:layout_column="0"
+                        app:cardBackgroundColor="@null"
+                        app:cardCornerRadius="5dp"
+                        android:layout_gravity="center_horizontal">
+                        <ImageView
+                            android:id="@+id/image_post"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:background="@null"
+                            android:layout_gravity="fill"
+                            android:maxHeight="350dp"
+                            android:scaleType="fitCenter"/>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <!--                Description-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_row="1"
+                    android:layout_column="0">
+                    <TextView
+                        android:id="@+id/label_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="10dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextSecondary"
+                        android:lineSpacingExtra="3dp" />
+                </LinearLayout>
+
+                <!--                Like + Comment + Save-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp"
+                    android:layout_row="2"
+                    android:layout_column="0">
+
+                    <ImageButton
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_favorite_border_black_24dp"
+                        android:background="@null"
+                        android:scaleType="fitXY"
+                        android:padding="5dp"/>
+                    <TextView
+                        android:id="@+id/label_likes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1500"
+                        android:textColor="@color/colorTextPrimary"
+                        android:fontFamily="@font/roboto_bold"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="10dp"/>
+
+                    <ImageButton
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_mode_comment_black_24dp"
+                        android:background="@null"
+                        android:scaleType="fitXY"
+                        android:padding="5dp"/>
+                    <TextView
+                        android:id="@+id/label_comments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12"
+                        android:textColor="@color/colorTextPrimary"
+                        android:fontFamily="@font/roboto_bold"
+                        android:layout_gravity="center_vertical"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <ImageButton
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_bookmark_border_black_24dp"
+                            android:scaleType="fitXY"
+                            android:background="@null"
+                            android:layout_alignParentRight="true"
+                            android:padding="5dp"/>
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </GridLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+<!--    Comment-->
+    <LinearLayout
+        android:id="@+id/comment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/post_layout"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="10dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingTop="10dp">
+            <com.alexzh.circleimageview.CircleImageView
+                android:id="@+id/comment_profileImg"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/profile_img_test"/>
+            <LinearLayout
+                android:id="@+id/TextAndName_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toRightOf="@id/comment_profileImg"
+                android:layout_toLeftOf="@+id/btnCommentLike">
+                <TextView
+                    android:id="@+id/lbl_commentUsername"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/white"/>
+                <TextView
+                    android:id="@+id/lbl_commentText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hey, ho perso le mie mutandine, aiutami a ritrovarle"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:fontFamily="@font/roboto"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
+            <ImageButton
+                android:id="@+id/btnCommentLike"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_favorite_border_white_24dp"
+                android:scaleType="fitXY"
+                android:background="@null"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="10dp" />
+            <TextView
+                android:id="@+id/lbl_commentLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3 likes"
+                android:layout_marginTop="2dp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/white"
+                android:layout_below="@id/TextAndName_layout"
+                android:layout_toRightOf="@id/comment_profileImg"
+                android:layout_marginLeft="10dp"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+
+<!--    Add Comment-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:paddingHorizontal="15dp"
+        android:layout_marginBottom="10dp">
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:cardBackgroundColor="#b0bec5"
+            app:cardCornerRadius="25dp"
+            app:cardElevation="3dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="5dp"
+                android:gravity="center_vertical">
+                <com.alexzh.circleimageview.CircleImageView
+                    android:id="@+id/addCommentProfileImg"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/profile_img_test"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="5dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Add a comment..."
+                    android:fontFamily="@font/roboto"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="10dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+
+</RelativeLayout>
