@@ -31,6 +31,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import Models.DataHelper;
 import Models.NavigationIconClickListener;
 
 public class MainActivity extends AppCompatActivity
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         setupBottomNavigation(savedInstanceState);
+
+        // Init DataHelper (singleton)
+        DataHelper.initInstance();
     }
 
     private void setupBottomNavigation(Bundle savedInstanceState)

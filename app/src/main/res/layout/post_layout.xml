@@ -141,6 +141,7 @@
                         android:scaleType="fitXY"
                         android:padding="5dp"/>
                     <TextView
+                        android:id="@+id/lbl_likes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1500"
@@ -158,6 +159,7 @@
                         android:scaleType="fitXY"
                         android:padding="5dp"/>
                     <TextView
+                        android:id="@+id/lbl_comment_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="12"

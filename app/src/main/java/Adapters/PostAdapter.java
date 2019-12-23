@@ -24,10 +24,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     }
 
     private OnItemClickListener mListener;
-    public void setOnItemClickListener(OnItemClickListener listener)
-    {
-        mListener = listener;
-    }
+    public void setOnItemClickListener(OnItemClickListener listener) { mListener = listener; }
 
     public class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -36,6 +33,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         public TextView DescriptionTextView;
         public ImageView ProfileImageView;
         public ImageView PostImageView;
+        public TextView LikesTextView;
+        public TextView CommentsTextView;
         public ImageButton CommentBtn;
 
         public ViewHolder(View itemView, final OnItemClickListener listener)
@@ -46,6 +45,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
             DescriptionTextView = itemView.findViewById(R.id.label_description);
             ProfileImageView = itemView.findViewById(R.id.image_profile);
             PostImageView = itemView.findViewById(R.id.image_post);
+            LikesTextView = itemView.findViewById(R.id.lbl_likes);
+            CommentsTextView = itemView.findViewById(R.id.lbl_comment_count);
             CommentBtn = itemView.findViewById(R.id.btn_comment);
 
             // Click listener for comment button
@@ -84,19 +85,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         View postView = inflater.inflate(R.layout.post_layout, parent, false);
 
         // Add click event listener
-            postView.findViewById(R.id.label_description).setOnClickListener(new View.OnClickListener()
+        postView.findViewById(R.id.label_description).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
             {
-                @Override
-                public void onClick(View v)
-                {
-                    System.out.println("yee");
-                    TextView txt = ((TextView) v);
-                    if (txt.getMaxLines() > 10)
-                        txt.setMaxLines(10);
-                    else
-                        txt.setMaxLines(100);
-                }
-            });
+                System.out.println("yee");
+                TextView txt = ((TextView) v);
+                if (txt.getMaxLines() > 10)
+                    txt.setMaxLines(10);
+                else
+                    txt.setMaxLines(100);
+            }
+        });
 
         // Return a new holder instance
         ViewHolder viewHolder = new ViewHolder(postView, mListener);
@@ -141,6 +142,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
             ImageView postImg = viewHolder.PostImageView;
             postImg.setImageResource(post.PostImage);
         }
+
+        viewHolder.LikesTextView.setText(String.valueOf(post.Likes));
+        viewHolder.CommentsTextView.setText(String.valueOf(post.CommentCount));
     }
 
     @Override

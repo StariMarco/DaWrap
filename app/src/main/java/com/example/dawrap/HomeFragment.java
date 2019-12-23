@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,15 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-
 import Adapters.PostAdapter;
-import Models.PostModel;
+import Models.DataHelper;
 
 public class HomeFragment extends Fragment
 {
-    ArrayList<PostModel> posts = new ArrayList<>();
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -52,24 +47,19 @@ public class HomeFragment extends Fragment
     private void postListViewSetup(View view)
     {
         RecyclerView postListView = view.findViewById(R.id.postListView);
-        System.out.println("id: " + postListView.getId());
-        posts.add(new PostModel("Marco", "Titolo Marco", null, R.drawable.profile_img_test, R.drawable.post_img_test_1, 100));
-        posts.add(new PostModel("Pippo", "Titolo Pippo", getString(R.string.test_description), R.drawable.profile_img_test, null, 5));
-        posts.add(new PostModel("Paolo", "Titolo Paolo", null, R.drawable.profile_img_test, R.drawable.post_img_test_2, 47));
-        posts.add(new PostModel("Rossi", "Titolo Rossi", null, R.drawable.profile_img_test, R.drawable.post_img_test_3, 907));
-        posts.add(new PostModel("Mattia", "Titolo Mattia", "Descrizione Mattia", R.drawable.profile_img_test, null, 16));
+//        System.out.println("id: " + postListView.getId());
 
-        PostAdapter adapter = new PostAdapter(posts);
+        PostAdapter adapter = new PostAdapter(DataHelper.getPosts());
         postListView.setAdapter(adapter);
         postListView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         adapter.setOnItemClickListener(new PostAdapter.OnItemClickListener()
         {
-            @Override
+            @Override // event listener for view comment button in post layout
             public void onCommentClick(int position)
             {
                 Intent i = new Intent(getActivity(), PostCommentsActivity.class);
-                i.putExtra("POST_DATA", posts.get(position));
+                i.putExtra("POST_DATA", DataHelper.getPosts().get(position));
                 startActivity(i);
             }
         });
