@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dawrap.R;
@@ -40,7 +41,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         public ViewHolder(View itemView, final OnItemClickListener listener)
         {
             super(itemView);
-            UsenameTextView = itemView.findViewById(R.id.lblUsername);
+            // Get views from post_layout.xml
+            UsenameTextView = itemView.findViewById(R.id.label_username);
             TitleTextView = itemView.findViewById(R.id.label_title);
             DescriptionTextView = itemView.findViewById(R.id.label_description);
             ProfileImageView = itemView.findViewById(R.id.image_profile);
@@ -75,6 +77,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         this.posts = posts;
     }
 
+    @NonNull
     @Override
     public PostAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
@@ -90,12 +93,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
             @Override
             public void onClick(View v)
             {
-                System.out.println("yee");
                 TextView txt = ((TextView) v);
-                if (txt.getMaxLines() > 10)
-                    txt.setMaxLines(10);
-                else
-                    txt.setMaxLines(100);
+                txt.setMaxLines((txt.getMaxLines() > 10) ? 10 : 100);
             }
         });
 
@@ -107,41 +106,31 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(PostAdapter.ViewHolder viewHolder, int position)
     {
+        // Get the post to bind at this row
         PostModel post = posts.get(position);
 
-        TextView txtUsername = viewHolder.UsenameTextView;
-        txtUsername.setText(post.Username);
-        TextView txtTitle = viewHolder.TitleTextView;
-        txtTitle.setText(post.Title);
+        // Set all properties
+        viewHolder.UsenameTextView.setText(post.Username);
+        viewHolder.TitleTextView.setText(post.Title);
 
         if(post.Description == null || post.Description.isEmpty())
-        {
             viewHolder.DescriptionTextView.setVisibility(View.GONE);
-
-        }
         else
         {
             viewHolder.DescriptionTextView.setVisibility(View.VISIBLE);
-            TextView txtDescription = viewHolder.DescriptionTextView;
-            txtDescription.setText(post.Description);
+            viewHolder.DescriptionTextView.setText(post.Description);
         }
 
         if(post.ProfileImage == null)
-        {
             viewHolder.PostImageView.setVisibility(View.GONE);
-        }
         else
         {
             viewHolder.PostImageView.setVisibility(View.VISIBLE);
-            ImageView profileImg = viewHolder.ProfileImageView;
-            profileImg.setImageResource(post.ProfileImage);
+            viewHolder.ProfileImageView.setImageResource(post.ProfileImage);
         }
 
         if(post.PostImage != null)
-        {
-            ImageView postImg = viewHolder.PostImageView;
-            postImg.setImageResource(post.PostImage);
-        }
+            viewHolder.PostImageView.setImageResource(post.PostImage);
 
         viewHolder.LikesTextView.setText(String.valueOf(post.Likes));
         viewHolder.CommentsTextView.setText(String.valueOf(post.CommentCount));

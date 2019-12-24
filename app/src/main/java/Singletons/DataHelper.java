@@ -1,27 +1,29 @@
-package Models;
-
-import android.provider.Settings;
+package Singletons;
 
 import com.example.dawrap.R;
 
 import java.util.ArrayList;
 
+import Models.Comment;
+import Models.PostModel;
+import Models.User;
+
 public class DataHelper
 {
     public static DataHelper instance;
 
-    private static ArrayList<PostModel> posts;
-    private static ArrayList<User> users;
-    private static ArrayList<Comment> comments;
+    private static ArrayList<PostModel> _posts;
+    private static ArrayList<User> _users;
+    private static ArrayList<Comment> _comments;
 
     public static void initInstance()
     {
         if(instance == null)
         {
             instance = new DataHelper();
-            posts = setPosts();
-            users = setUsers();
-            comments = setComments();
+            _posts = setPosts();
+            _users = setUsers();
+            _comments = setComments();
         }
 
 
@@ -36,17 +38,17 @@ public class DataHelper
 
     public static ArrayList<PostModel> getPosts()
     {
-        return posts;
+        return _posts;
     }
 
     public static ArrayList<User> getUsers()
     {
-        return users;
+        return _users;
     }
 
     public static ArrayList<Comment> getComments()
     {
-        return comments;
+        return _comments;
     }
 
     private static ArrayList<PostModel> setPosts()
@@ -84,10 +86,10 @@ public class DataHelper
         list.add(new Comment(6, 2, 1, "He wouldn't get it", 1));
         list.add(new Comment(7, 1, 0, "Hey ho perso le mutandine. Aiutami a ritrovarle!", 5));
         list.add(new Comment(8, 0, 0, "You got me in the first half, not gonna lie", 29));
-        list.add(new Comment(9, 5, 0, "Love ya!", 56));
+        list.add(new Comment(9, 4, 0, "Love ya!", 56));
         list.add(new Comment(10, 1, 0, "Comment Rossi", 5));
         list.add(new Comment(11, 0, 0, "Nice pick", 29));
-        list.add(new Comment(12, 5, 0, "U dump bitch", 56));
+        list.add(new Comment(12, 4, 0, "U dump bitch", 56));
         return list;
     }
 }

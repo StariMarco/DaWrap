@@ -3,7 +3,6 @@ package Models;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.animation.Interpolator;
@@ -14,86 +13,58 @@ import com.example.dawrap.R;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-/**
- * {@link android.view.View.OnClickListener} used to translate the product grid sheet downward on
- * the Y-axis when the navigation icon in the toolbar is pressed.
- */
+// This class is used to translate the fragment_container sheet downward on
+// the Y-axis when the "newPost" icon in the bottom NavBar is pressed.
 public class NavigationIconClickListener implements View.OnClickListener {
 
-    private final AnimatorSet animatorSet = new AnimatorSet();
-    private Context context;
-    private View sheet;
-    private Interpolator interpolator;
-    private int height;
-    private boolean backdropShown = false;
-    private Drawable openIcon;
-    private Drawable closeIcon;
-    private BottomNavigationView bottomNavigationView;
-    private boolean[] backdropActive;
+    private View _sheet;
+    private Interpolator _interpolator;
+    private Drawable _openIcon;
+    private Drawable _closeIcon;
+    private BottomNavigationView _bottomNavigationView;
+    private boolean[] _backdropShown;
+    private int _backdropContentHeight;
 
+    public NavigationIconClickListener(View sheet, @Nullable Interpolator interpolator, @Nullable Drawable openIcon,
+                                       @Nullable Drawable closeIcon, @Nullable Integer mHeight,
+                                       BottomNavigationView bottomNavigationView, boolean[] backdropActive)
+    {
+        _sheet = sheet;
+        _interpolator = interpolator;
+        _openIcon = openIcon;
+        _closeIcon = closeIcon;
+        _bottomNavigationView = bottomNavigationView;
+        _backdropShown = backdropActive;
 
-    NavigationIconClickListener(Context context, View sheet) {
-        this(context, sheet, null);
-    }
-
-    public NavigationIconClickListener(Context context, View sheet, @Nullable Interpolator interpolator) {
-        this(context, sheet, interpolator, null, null, null, null, null);
-    }
-
-    public NavigationIconClickListener(
-            Context context, View sheet, @Nullable Interpolator interpolator,
-            @Nullable Drawable openIcon, @Nullable Drawable closeIcon, @Nullable Integer mHeight, BottomNavigationView bottomNavigationView, boolean[] backdropActive) {
-        this.context = context;
-        this.sheet = sheet;
-        this.interpolator = interpolator;
-        this.openIcon = openIcon;
-        this.closeIcon = closeIcon;
-        this.bottomNavigationView = bottomNavigationView;
-        this.backdropActive = backdropActive;
-
-//        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-//        Display display = wm.getDefaultDisplay();
-//        height = display.getHeight();
-
-        height = mHeight;
+        _backdropContentHeight = mHeight;
     }
 
     @Override
-    public void onClick(View view) {
-        backdropShown = !backdropShown;
-        backdropActive[0] = !backdropActive[0];
+    public void onClick(View view)
+    {
+        _backdropShown[0] = !_backdropShown[0];
 
-        // Cancel the existing animations
-        animatorSet.removeAllListeners();
-        animatorSet.end();
-        animatorSet.cancel();
+        AnimatorSet animatorSet = new AnimatorSet();
 
         updateIcon();
 
-        final int translateY = height;
-//                context.getResources().getDimensionPixelSize(R.dimen.shr_product_grid_reveal_height);
-
-        ObjectAnimator animator = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, backdropShown ? translateY : 0);
-        animator.setDuration(500);
-        if (interpolator != null) {
-            animator.setInterpolator(interpolator);
-        }
+        ObjectAnimator animator = ObjectAnimator.ofFloat(_sheet, View.TRANSLATION_Y, _backdropShown[0] ? -_backdropContentHeight : 0);
+        animator.setDuration(300);
+        animator.setInterpolator(_interpolator);
         animatorSet.play(animator);
         animator.start();
     }
 
     @SuppressLint("RestrictedApi")
-    private void updateIcon() {
-        if (openIcon != null && closeIcon != null) {
-            BottomNavigationItemView menuItem = bottomNavigationView.findViewById(R.id.nav_new_post);
-            if (bottomNavigationView == null) {
-                throw new IllegalArgumentException("bottomNavigationView is null");
-            }
-            if (backdropShown) {
-                menuItem.setIcon(closeIcon);
-            } else {
-                menuItem.setIcon(openIcon);
-            }
+    private void updateIcon()
+    {
+        if (_openIcon != null && _closeIcon != null && _bottomNavigationView != null)
+        {
+            // Get the new post item
+            BottomNavigationItemView menuItem = _bottomNavigationView.findViewById(R.id.nav_new_post);
+
+            // Update the icon
+            menuItem.setIcon((_backdropShown[0]) ? _closeIcon : _openIcon);
         }
     }
 }

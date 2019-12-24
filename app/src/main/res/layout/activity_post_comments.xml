@@ -9,14 +9,53 @@
     android:background="#263238"
     android:gravity="top">
 
+    <!--                User info + share-->
+    <RelativeLayout
+        android:id="@+id/post_comment_top_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:paddingTop="10dp"
+        android:elevation="4dp"
+        android:paddingHorizontal="5dp"
+        android:outlineProvider="none"
+        android:background="@color/white"
+        android:clipToPadding="false">
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back_black_24dp"
+            android:background="@null"
+            android:layout_centerVertical="true"
+            android:onClick="onBackBtnClicked"/>
+        <com.alexzh.circleimageview.CircleImageView
+            android:id="@+id/image_profile"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/profile_img_test"
+            android:layout_centerInParent="true"/>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_reply_black_24dp"
+            android:scaleX="-1"
+            android:scaleType="fitXY"
+            android:background="@null"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:padding="5dp" />
+    </RelativeLayout>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/post_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/post_comment_top_nav"
+        android:elevation="0dp"
+        app:cardBackgroundColor="@color/white"
         app:cardElevation="3dp"
         app:cardCornerRadius="16dp"
-        android:layout_marginTop="-20dp"
+        android:layout_marginTop="-30dp"
         android:background="@null">
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,35 +64,7 @@
             android:clipToPadding="false"
             android:paddingTop="30dp">
 
-            <!--                User info + share-->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp">
-                <ImageButton
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_arrow_back_black_24dp"
-                    android:background="@null"
-                    android:layout_centerVertical="true"
-                    android:onClick="onBackBtnClicked"/>
-                <com.alexzh.circleimageview.CircleImageView
-                    android:id="@+id/image_profile"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/profile_img_test"
-                    android:layout_centerHorizontal="true"/>
-                <ImageButton
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_reply_black_24dp"
-                    android:scaleX="-1"
-                    android:scaleType="fitXY"
-                    android:background="@null"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:padding="5dp" />
-            </RelativeLayout>
+
 
             <!--                Title-->
             <TextView
@@ -179,14 +190,25 @@
             </GridLayout>
 
 <!--            Touch control-->
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="-10dp">
+                <View
+                    android:id="@+id/draggable_view_touch_sensor"
+                    android:layout_width="200dp"
+                    android:layout_height="25dp"
+                    android:backgroundTint="@null"
+                    android:layout_centerInParent="true"/>
                 <View
                     android:id="@+id/draggable_view"
                     android:layout_width="100dp"
                     android:layout_height="8dp"
                     android:background="@drawable/post_border_shape"
                     android:backgroundTint="#263238"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -230,16 +252,17 @@
                 android:paddingVertical="5dp"
                 android:gravity="center_vertical">
                 <com.alexzh.circleimageview.CircleImageView
-                    android:id="@+id/addCommentProfileImg"
+                    android:id="@+id/add_comment_profile_image"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:src="@drawable/profile_img_test"
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="5dp"/>
-                <TextView
+                <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Add a comment..."
+                    android:hint="Add a comment..."
+                    android:background="@null"
                     android:fontFamily="@font/roboto"
                     android:textColor="@color/white"
                     android:layout_marginLeft="10dp"/>

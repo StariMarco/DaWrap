@@ -43,6 +43,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         public ViewHolder(@NonNull View itemView, final OnItemClickListener listener)
         {
             super(itemView);
+            // Get views from comment_layout.xml
             ProfileImage = itemView.findViewById(R.id.comment_profileImg);
             UsernameTextView = itemView.findViewById(R.id.lbl_commentUsername);
             TextTextView = itemView.findViewById(R.id.lbl_commentText);
@@ -90,23 +91,24 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position)
     {
+        // Get the comment to bind at this row
         Comment comment = comments.get(position);
-        User user;
-        user = getUser(comment.UserId);
-
+        // Get the user who created this comment
+        User user = getUser(comment.UserId);
         if(user == null)
         {
             Log.e("CommentAdapter", "User not found");
             return;
         }
 
+        // Set all properties
         String likes = comment.Likes + " \"like\"";
 
         holder.ProfileImage.setImageResource(user.ProfileImage);
         holder.LikesTextView.setText(likes);
         holder.TextTextView.setText(comment.Text);
         holder.UsernameTextView.setText(user.Username);
-        holder.LikeButton.setTag(R.drawable.ic_favorite_border_white_24dp);
+        holder.LikeButton.setTag("false");
     }
 
     @Nullable

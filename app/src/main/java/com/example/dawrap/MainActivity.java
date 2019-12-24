@@ -5,18 +5,10 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Property;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -28,20 +20,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import Models.DataHelper;
+import Singletons.DataHelper;
 import Models.NavigationIconClickListener;
+import Singletons.SystemHelper;
 
 public class MainActivity extends AppCompatActivity
 {
-    private LinearLayout mView;
-    private int height = 0;
-    private boolean[] backdropActive = {false};
-    private View createPostView;
-
-    AnimatorSet fragmentTransitionAnimatorSet = new AnimatorSet();
+    private LinearLayout _backdropContentView;
+    private boolean[] _backdropShown = {false};
+    private BottomNavigationView _bottomNavigationView;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -50,81 +39,82 @@ public class MainActivity extends AppCompatActivity
 
         setupBottomNavigation(savedInstanceState);
 
-        // Init DataHelper (singleton)
+        // Init singletons
         DataHelper.initInstance();
+        SystemHelper.initInstance();
     }
 
     private void setupBottomNavigation(Bundle savedInstanceState)
     {
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setOnNavigationItemSelectedListener(navListener);
+        _bottomNavigationView = findViewById(R.id.bottom_navigation);
+        _bottomNavigationView.setOnNavigationItemSelectedListener(bottomNavListener);
 
-        // Seth home fragment as default onCreate
+        // Set home fragment as default onCreate
         if(savedInstanceState == null)
         {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         }
 
-        setupBackdrop(bottomNav);
+        setupNewPostItem();
     }
 
-    private void setupBackdrop(final BottomNavigationView bottomNavigationView)
+    private void setupNewPostItem()
     {
-        final View createPostItem = bottomNavigationView.findViewById(R.id.nav_new_post);
-        mView = findViewById(R.id.backdrop_content);
-        createPostView = createPostItem;
+        // Get the item from the layout
+        View newPostItemView= _bottomNavigationView.findViewById(R.id.nav_new_post);
 
-        createPostItem.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener()
+        // Get the backdrop content
+        _backdropContentView = findViewById(R.id.backdrop_content);
+
+        // Create an event listener for set the click event handler when the view has been created
+        newPostItemView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener()
         {
             @Override
             public void onGlobalLayout()
             {
-                height = mView.getHeight();
-                createPostItem.setOnClickListener(new NavigationIconClickListener(getApplicationContext(),
+                newPostItemView.setOnClickListener(new NavigationIconClickListener(
                         findViewById(R.id.fragment_container),
                         new AccelerateDecelerateInterpolator(),
                         getApplicationContext().getResources().getDrawable(R.drawable.ic_create_white_24dp),
                         getApplicationContext().getResources().getDrawable(R.drawable.ic_close_white_24dp),
-                        -height,
-                        (BottomNavigationView) bottomNavigationView,
-                        backdropActive));
+                        _backdropContentView.getHeight(),
+                        _bottomNavigationView,
+                        _backdropShown));
 
-                createPostItem.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                newPostItemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener()
+    private BottomNavigationView.OnNavigationItemSelectedListener bottomNavListener = new BottomNavigationView.OnNavigationItemSelectedListener()
     {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem)
         {
             Fragment selectedFragment = null;
-            BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
-            if(backdropActive[0])
+            // return if the item is already selected
+            if(_bottomNavigationView.getSelectedItemId() == menuItem.getItemId())
                 return false;
 
             // Manage Bottom Navigation items click listeners
             switch (menuItem.getItemId())
             {
                 case R.id.nav_home:
-                    if(bottomNav.getSelectedItemId() != R.id.nav_home)
-                        selectedFragment = new HomeFragment();
-                    break;
-                case R.id.nav_new_post:
+                    selectedFragment = new HomeFragment();
                     break;
                 case R.id.nav_user_profile:
-                    if(bottomNav.getSelectedItemId() != R.id.nav_user_profile)
-                        selectedFragment = new UserProfileFragment();
+                    selectedFragment = new UserProfileFragment();
+                    break;
+                default:
                     break;
             }
 
-            // Page transition
-            if(selectedFragment != null)
-            {
-                transitionToFragment(getApplicationContext(), selectedFragment, new AccelerateDecelerateInterpolator());
-            }
+            // Make the content of the page return to the start position
+            if (_backdropShown[0])
+                _bottomNavigationView.findViewById(R.id.nav_new_post).performClick();
+            // Page transition animation
+            transitionToFragment(getApplicationContext(), selectedFragment, new AccelerateDecelerateInterpolator());
 
             // Return true = select item
             return true;
@@ -133,74 +123,47 @@ public class MainActivity extends AppCompatActivity
 
     private void transitionToFragment(Context context, final Fragment newFragment, @Nullable Interpolator interpolator)
     {
+        // Get the view to animate
         View sheet = findViewById(R.id.fragment_container);
-        int displayHeight = getDisplayHeight(context);
 
-        // dp to pixels
-        float bounceOffset= getPixelsFromDp(20);
+        float bounceDistance = SystemHelper.getPixelsFromDp(getResources(), 20);
 
-        // Cancel the existing animations
-        fragmentTransitionAnimatorSet.removeAllListeners();
-        fragmentTransitionAnimatorSet.end();
-        fragmentTransitionAnimatorSet.cancel();
+        // Create the animator set to concatenate all animations
+        AnimatorSet fragmentTransitionAnimatorSet = new AnimatorSet();
 
         // Create the animation
-        ObjectAnimator startBounce = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, bounceOffset);
-        startBounce.setDuration(200);
-        startBounce.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator initialBounce = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, bounceDistance);
+        initialBounce.setDuration(200);
+        initialBounce.setInterpolator(new AccelerateInterpolator());
 
-        ObjectAnimator endBounce = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, 0);
-        endBounce.setDuration(200);
-        endBounce.setInterpolator(new DecelerateInterpolator());
+        ObjectAnimator finalBounce = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, 0);
+        finalBounce.setDuration(200);
+        finalBounce.setInterpolator(new DecelerateInterpolator());
 
-        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, -displayHeight);
-        fadeOut.setDuration(500);
+        ObjectAnimator transitionUp = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, -SystemHelper.getDisplayHeight(context));
+        transitionUp.setDuration(300);
         if(interpolator != null)
-            fadeOut.setInterpolator(interpolator);
-        fadeOut.addListener(new AnimatorListenerAdapter()
+            transitionUp.setInterpolator(interpolator);
+        transitionUp.addListener(new AnimatorListenerAdapter()
         {
             @Override
             public void onAnimationEnd(Animator animation)
             {
+                // When the animation ends change the fragment inside the view
                 super.onAnimationEnd(animation);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFragment).commit();
             }
         });
 
-        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, bounceOffset);
-        fadeIn.setDuration(500);
+        ObjectAnimator transitionDown = ObjectAnimator.ofFloat(sheet, View.TRANSLATION_Y, bounceDistance);
+        transitionDown.setDuration(500);
         if(interpolator != null)
-            fadeIn.setInterpolator(interpolator);
+            transitionDown.setInterpolator(interpolator);
 
-        fragmentTransitionAnimatorSet.play(fadeOut).after(startBounce);
-        fragmentTransitionAnimatorSet.play(fadeOut).before(fadeIn);
-        fragmentTransitionAnimatorSet.play(endBounce).after(fadeIn);
+        // Concatenate and start animations
+        fragmentTransitionAnimatorSet.play(transitionUp).after(initialBounce);
+        fragmentTransitionAnimatorSet.play(transitionUp).before(transitionDown);
+        fragmentTransitionAnimatorSet.play(finalBounce).after(transitionDown);
         fragmentTransitionAnimatorSet.start();
-    }
-
-    private float getPixelsFromDp(float dp)
-    {
-        Resources r = getResources();
-        return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp,
-                r.getDisplayMetrics()
-        );
-    }
-
-    private int getDisplayHeight(Context context)
-    {
-        WindowManager wm = (WindowManager) context.getSystemService(context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        return display.getHeight();
-    }
-
-    private void resetBackdrop()
-    {
-        // Make the content of the page return to the start position
-        if (backdropActive[0])
-        {
-            createPostView.performClick();
-        }
     }
 }

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import Adapters.PostAdapter;
-import Models.DataHelper;
+import Singletons.DataHelper;
 
 public class HomeFragment extends Fragment
 {
@@ -30,24 +30,23 @@ public class HomeFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
 
-        shapeBackground(view);
+        setBackgroundShape(view);
 
         postListViewSetup(view);
     }
 
-    private void shapeBackground(@NonNull View view)
+    private void setBackgroundShape(@NonNull View view)
     {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
-            view.findViewById(R.id.postBackground).setBackgroundResource(R.drawable.post_backgroung_shape);
-            view.findViewById(R.id.postListView).setBackgroundResource(R.drawable.post_backgroung_shape);
+            view.findViewById(R.id.post_list_background).setBackgroundResource(R.drawable.post_backgroung_shape);
+            view.findViewById(R.id.post_list_view).setBackgroundResource(R.drawable.post_backgroung_shape);
         }
     }
 
     private void postListViewSetup(View view)
     {
-        RecyclerView postListView = view.findViewById(R.id.postListView);
-//        System.out.println("id: " + postListView.getId());
+        RecyclerView postListView = view.findViewById(R.id.post_list_view);
 
         PostAdapter adapter = new PostAdapter(DataHelper.getPosts());
         postListView.setAdapter(adapter);

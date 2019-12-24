@@ -1,7 +1,5 @@
 package Models;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import java.io.Serializable;
 import java.util.Date;
 

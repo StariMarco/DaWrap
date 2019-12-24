@@ -15,8 +15,7 @@
         <com.alexzh.circleimageview.CircleImageView
             android:id="@+id/comment_profileImg"
             android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/profile_img_test"/>
+            android:layout_height="40dp"/>
         <LinearLayout
             android:id="@+id/TextAndName_layout"
             android:layout_width="match_parent"
@@ -28,7 +27,6 @@
                 android:id="@+id/lbl_commentUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username"
                 android:layout_marginLeft="10dp"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/white"/>
@@ -36,7 +34,6 @@
                 android:id="@+id/lbl_commentText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hey, ho perso le mie mutandine, aiutami a ritrovarle"
                 android:layout_marginLeft="10dp"
                 android:layout_gravity="center_vertical"
                 android:fontFamily="@font/roboto"
@@ -56,7 +53,6 @@
             android:id="@+id/lbl_commentLikes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3 likes"
             android:layout_marginTop="2dp"
             android:layout_gravity="center_vertical"
             android:textColor="@color/white"

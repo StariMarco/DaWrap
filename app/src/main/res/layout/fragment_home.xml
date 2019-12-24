@@ -6,11 +6,11 @@
     android:clipToPadding="true"
     app:cardPreventCornerOverlap="false"
     app:cardElevation="3dp"
-    android:id="@+id/postBackground"
+    android:id="@+id/post_list_background"
     android:paddingBottom="20dp">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/postListView"
+            android:id="@+id/post_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingBottom="5dp"

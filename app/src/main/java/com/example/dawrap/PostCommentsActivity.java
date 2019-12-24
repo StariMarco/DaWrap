@@ -1,54 +1,31 @@
 package com.example.dawrap;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.animation.ValueAnimator;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.os.Bundle;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
 import java.util.ArrayList;
-import java.util.List;
 
 import Adapters.CommentAdapter;
 import Models.Comment;
-import Models.DataHelper;
+import Singletons.DataHelper;
 import Models.PostModel;
 
 public class PostCommentsActivity extends AppCompatActivity implements View.OnTouchListener
 {
-    private PostModel post;
-    private View postCard;
-    private View draggableView;
-    private View imageLayout;
-    private View descriptionLayout;
-    private Display display;
-    private float dy, dyComments, bottomPos = -1, contentHeight;
-    private Point displaySize;
-    private View commentList;
+    private PostModel _post;
+    private View _postCard;
+    private View _draggableView;
+    private View _commentList;
+    private float _dyPostCard, _dyComments, _bottomPos = -1, _contentHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -56,61 +33,74 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_comments);
 
-        post = (PostModel)getIntent().getSerializableExtra("POST_DATA");
+        _post = (PostModel)getIntent().getSerializableExtra("POST_DATA");
 
         // Setup the post card content
-        pageSetup();
+        cardSetup();
 
         // Make the card able to move in the Y axes
         postCardAnimationSetup();
 
-        // Comment List view setup
+        // Setup the comment List view
         commentsListViewSetup();
+    }
+
+    private void cardSetup()
+    {
+        // Setup the post card content
+        if(_post.PostImage != null)
+            ((ImageView)findViewById(R.id.image_post)).setImageResource(_post.PostImage);
+
+        ((TextView)findViewById(R.id.label_title)).setText(_post.Title);
+        ((ImageView)findViewById(R.id.image_profile)).setImageResource(_post.ProfileImage);
+
+        if(!(_post.Description == null || _post.Description.isEmpty()))
+            ((TextView)findViewById(R.id.label_description)).setText(_post.Description);
+
+        ((TextView)findViewById(R.id.label_likes)).setText(String.valueOf(_post.Likes));
+        ((TextView)findViewById(R.id.label_comments)).setText(String.valueOf(_post.CommentCount));
     }
 
     private void postCardAnimationSetup()
     {
-        // Set on click listener on the post card to animate
-        postCard = findViewById(R.id.post_layout);
-        draggableView = findViewById(R.id.draggable_view);
-        imageLayout = findViewById(R.id.image_layout);
-        descriptionLayout = findViewById(R.id.label_description);
-        commentList = findViewById(R.id.comment_list_layout);
-        draggableView.setOnTouchListener(this);
+        View imageLayout = findViewById(R.id.image_layout);
+        View descriptionLayout = findViewById(R.id.label_description);
+        _postCard = findViewById(R.id.post_layout);
+        _commentList = findViewById(R.id.comment_list_layout);
 
+        // Set on click listener on the post card to animate
+        _draggableView = findViewById(R.id.draggable_view_touch_sensor);
+        _draggableView.setOnTouchListener(this);
+
+        // Get post content height
         imageLayout.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            // Get post content height
-            if (post.Description == null)
+            if (_post.Description == null)
             {
-                contentHeight = imageLayout.getHeight();
+                _contentHeight = imageLayout.getHeight();
                 descriptionLayout.setVisibility(View.GONE);
             }
             else
             {
-                contentHeight = descriptionLayout.getHeight();
+                _contentHeight = descriptionLayout.getHeight();
                 imageLayout.setVisibility(View.GONE);
             }
         });
-
-        // Get display size (x, y)
-        displaySize = new Point();
-        display = getWindowManager().getDefaultDisplay();
-        display.getSize(displaySize);
     }
 
     private void commentsListViewSetup()
     {
-        RecyclerView commentsListView = findViewById(R.id.comments_listView);
-
+        // Get and filter the comments related to this post
         ArrayList<Comment> postComments = new ArrayList<>();
         ArrayList<Comment> comments = DataHelper.getComments();
         for(Comment c : comments)
         {
-            if(c.PostId == post.PostId)
+            if(c.PostId == _post.PostId)
                 postComments.add(c);
         }
 
+        // Create the recycler view content
         CommentAdapter adapter = new CommentAdapter(postComments, DataHelper.getUsers());
+        RecyclerView commentsListView = findViewById(R.id.comments_listView);
         commentsListView.setAdapter(adapter);
         commentsListView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -119,72 +109,55 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             @Override // event listener for like button in comment layout
             public void onLikeClick(TextView likeTxt, ImageButton btn, int position)
             {
-                if(btn.getTag().equals(R.drawable.ic_favorite_border_white_24dp))
+                if(btn == null || btn.getTag() == null)
                 {
+                    Log.e("PostCommentActivity", "The comment like button or his tag is null");
+                    return;
+                }
+                if(btn.getTag().equals("false"))
+                {
+                    // like
                     btn.setImageResource(R.drawable.ic_favorite_white_24dp);
                     String likes = ++postComments.get(position).Likes + " \"like\"";
                     likeTxt.setText(likes);
-                    btn.setTag(R.drawable.ic_favorite_white_24dp);
+                    btn.setTag("true");
                 }else
                 {
+                    // remove like
                     btn.setImageResource(R.drawable.ic_favorite_border_white_24dp);
                     String likes = --postComments.get(position).Likes + " \"like\"";
                     likeTxt.setText(likes);
-                    btn.setTag(R.drawable.ic_favorite_border_white_24dp);
+                    btn.setTag("false");
                 }
             }
         });
     }
 
-    private void pageSetup()
-    {
-        // Setup the post card content
-        if(post.PostImage != null)
-            ((ImageView)findViewById(R.id.image_post)).setImageResource(post.PostImage);
-
-        ((TextView)findViewById(R.id.label_title)).setText(post.Title);
-        ((ImageView)findViewById(R.id.image_profile)).setImageResource(post.ProfileImage);
-
-        if(!(post.Description == null || post.Description.isEmpty()))
-            ((TextView)findViewById(R.id.label_description)).setText(post.Description);
-
-        ((TextView)findViewById(R.id.label_likes)).setText(String.valueOf(post.Likes));
-        ((TextView)findViewById(R.id.label_comments)).setText(String.valueOf(post.CommentCount));
-
-
-    }
-
-    public void onBackBtnClicked(View view)
-    {
-        super.onBackPressed();
-    }
-
     @Override
-    public boolean onTouch(View v, MotionEvent event)
+    public boolean onTouch(View view, MotionEvent event)
     {
-        if(v.getId() == draggableView.getId())
+        if(view.getId() == _draggableView.getId())
         {
-            if(bottomPos == -1) bottomPos = event.getRawY() + 1;
+            // Get the max Y position
+            if(_bottomPos == -1) _bottomPos = event.getRawY() + 1;
+
             switch (event.getAction())
             {
                 case MotionEvent.ACTION_DOWN:
-                    dy = postCard.getY() - event.getRawY();
-                    dyComments = commentList.getY() - event.getRawY();
+                    _dyPostCard = _postCard.getY() - event.getRawY();
+                    _dyComments = _commentList.getY() - event.getRawY();
                     break;
                 case MotionEvent.ACTION_MOVE:
-//                    Log.d("Pos", "Y: " + event.getRawY());
                     // Clamp movement to make the post content always visible
-                    if(event.getRawY() > bottomPos || event.getRawY() < contentHeight) return false;
+                    if(event.getRawY() > _bottomPos || event.getRawY() < _contentHeight || event.getRawY() < 500) return false;
 
-                    postCard.animate()
-                            .y(event.getRawY() + dy)
+                    _postCard.animate()
+                            .y(event.getRawY() + _dyPostCard)
                             .setDuration(0)
                             .start();
 
-                    float dp = dpFromPx(getApplicationContext(), dy);
-
-                    commentList.animate()
-                            .y(event.getRawY() + dyComments)
+                    _commentList.animate()
+                            .y(event.getRawY() + _dyComments)
                             .setDuration(0)
                             .start();
 
@@ -195,7 +168,8 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         return false;
     }
 
-    public static float dpFromPx(final Context context, final float px) {
-        return px / context.getResources().getDisplayMetrics().density;
+    public void onBackBtnClicked(View view)
+    {
+        super.onBackPressed();
     }
 }
