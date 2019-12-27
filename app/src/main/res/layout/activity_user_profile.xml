@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/post_backgroung_shape"
-    android:backgroundTint="@color/white"
-    android:elevation="8dp"
-    android:paddingBottom="10dp"
-    android:clipToPadding="false">
+    tools:context=".UserProfileActivity">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="153dp"
         android:background="@color/colorPrimary"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_back_white_24dp"
+        android:background="@null"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:onClick="onBackBtnClicked"/>
 
     <com.alexzh.circleimageview.CircleImageView
         android:id="@+id/usr_profile_image"
@@ -42,6 +48,7 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
             <TextView
+                android:id="@+id/usr_username_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Username"
@@ -50,6 +57,7 @@
                 android:fontFamily="@font/roboto_bold"
                 android:layout_marginTop="50dp"/>
             <TextView
+                android:id="@+id/usr_post_count_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="12 post"
@@ -64,30 +72,21 @@
                 android:layout_gravity="bottom"
                 android:layout_marginTop="30dp"
                 android:layout_marginHorizontal="20dp"/>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="bottom"
-                    android:layout_marginHorizontal="10dp">
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/saved_posts_btn"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="160dp"
-                        android:layout_height="60dp"
-                        android:text="Saved Posts"
-                        app:cornerRadius="0dp"
-                        app:strokeColor="@color/white" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/edit_profile_btn"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="160dp"
-                        android:layout_height="60dp"
-                        android:text="Edit Profile"
-                        app:cornerRadius="0dp"
-                        app:strokeColor="@color/white" />
-                </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="bottom"
+                android:layout_marginHorizontal="10dp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/follow_btn"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="320dp"
+                    android:layout_height="60dp"
+                    android:text="Follow"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/white" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

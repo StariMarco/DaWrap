@@ -2,6 +2,7 @@ package Adapters;
 
 import android.content.Context;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alexzh.circleimageview.CircleImageView;
+import com.alexzh.circleimageview.ItemSelectedListener;
 import com.example.dawrap.R;
 
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import Models.Comment;
+import Models.Post;
 import Models.User;
+import Singletons.DataHelper;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder>
 {
@@ -65,12 +69,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     }
 
     private List<Comment> comments;
-    private List<User> users;
 
-    public CommentAdapter(final List<Comment> comments, List<User> users)
+    public CommentAdapter(final List<Comment> comments)
     {
         this.comments = comments;
-        this.users = users;
     }
 
     @NonNull
@@ -94,7 +96,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         // Get the comment to bind at this row
         Comment comment = comments.get(position);
         // Get the user who created this comment
-        User user = getUser(comment.UserId);
+        User user = DataHelper.getUserById(comment.UserId);
+
+        User currentUser = DataHelper.getCurrentUser();
         if(user == null)
         {
             Log.e("CommentAdapter", "User not found");
@@ -102,32 +106,30 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         }
 
         // Set all properties
-        String likes = comment.Likes + " \"like\"";
+        String likes = comment.getLikesCount() + " \"like\"";
 
         holder.ProfileImage.setImageResource(user.ProfileImage);
         holder.LikesTextView.setText(likes);
         holder.TextTextView.setText(comment.Text);
         holder.UsernameTextView.setText(user.Username);
-        holder.LikeButton.setTag("false");
-    }
 
-    @Nullable
-    private User getUser(int userId)
-    {
-        User user = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+        if(comment.hasUserLikedThisComment(currentUser.UserId))
+            holder.LikeButton.setImageResource(R.drawable.ic_favorite_white_24dp);
+
+        holder.ProfileImage.setOnItemSelectedClickListener(new ItemSelectedListener()
         {
-            user = users.stream().filter(u -> u.UserId == userId).findAny().orElse(null);
-        }
-        else
-        {
-            for (User u : users)
+            @Override
+            public void onSelected(View view)
             {
-                if(u.UserId == userId)
-                    user = u;
+                return;
             }
-        }
-        return user;
+
+            @Override
+            public void onUnselected(View view)
+            {
+                return;
+            }
+        });
     }
 
     @Override

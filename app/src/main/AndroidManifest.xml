@@ -11,8 +11,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".PostCommentsActivity" android:parentActivityName=".PostActivity">
-        </activity>
+        <activity
+            android:name=".UserProfileActivity"
+            android:parentActivityName=".PostActivity" />
+        <activity
+            android:name=".PostCommentsActivity"
+            android:parentActivityName=".PostActivity" />
         <activity android:name=".BackdropContentActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

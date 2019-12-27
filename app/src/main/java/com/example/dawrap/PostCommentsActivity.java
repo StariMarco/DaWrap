@@ -1,5 +1,6 @@
 package com.example.dawrap;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -12,16 +13,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alexzh.circleimageview.CircleImageView;
+import com.alexzh.circleimageview.ItemSelectedListener;
+
 import java.util.ArrayList;
 
 import Adapters.CommentAdapter;
 import Models.Comment;
+import Models.User;
 import Singletons.DataHelper;
-import Models.PostModel;
+import Models.Post;
 
 public class PostCommentsActivity extends AppCompatActivity implements View.OnTouchListener
 {
-    private PostModel _post;
+    private Post _post;
     private View _postCard;
     private View _draggableView;
     private View _commentList;
@@ -33,7 +38,8 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_comments);
 
-        _post = (PostModel)getIntent().getSerializableExtra("POST_DATA");
+        int id = getIntent().getIntExtra("POST_ID", 0);
+        _post = DataHelper.getPostById(id);
 
         // Setup the post card content
         cardSetup();
@@ -47,17 +53,41 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
 
     private void cardSetup()
     {
+        User user = DataHelper.getUserById(_post.UserId);
         // Setup the post card content
-        if(_post.PostImage != null)
-            ((ImageView)findViewById(R.id.image_post)).setImageResource(_post.PostImage);
+        if(_post.Image != null)
+            ((ImageView)findViewById(R.id.image_post)).setImageResource(_post.Image);
 
+        // Title
         ((TextView)findViewById(R.id.label_title)).setText(_post.Title);
-        ((ImageView)findViewById(R.id.image_profile)).setImageResource(_post.ProfileImage);
 
+        // Profile image
+        ((CircleImageView)findViewById(R.id.image_profile)).setImageResource(user.ProfileImage);
+        ((CircleImageView)findViewById(R.id.image_profile)).setOnItemSelectedClickListener(new ItemSelectedListener()
+        {
+            @Override
+            public void onSelected(View view)
+            {
+                return;
+            }
+
+            @Override
+            public void onUnselected(View view)
+            {
+                return;
+            }
+        });
+
+        // Description
         if(!(_post.Description == null || _post.Description.isEmpty()))
             ((TextView)findViewById(R.id.label_description)).setText(_post.Description);
 
-        ((TextView)findViewById(R.id.label_likes)).setText(String.valueOf(_post.Likes));
+        // Likes
+        if(_post.hasUserLikedThisPost(DataHelper.getCurrentUser().UserId))
+            ((ImageButton)findViewById(R.id.like_button)).setImageResource(R.drawable.ic_favorite_black_24dp);
+
+        ((TextView)findViewById(R.id.label_likes)).setText(String.valueOf(_post.getLikesCount()));
+        // Comments
         ((TextView)findViewById(R.id.label_comments)).setText(String.valueOf(_post.CommentCount));
     }
 
@@ -90,16 +120,16 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
     private void commentsListViewSetup()
     {
         // Get and filter the comments related to this post
-        ArrayList<Comment> postComments = new ArrayList<>();
-        ArrayList<Comment> comments = DataHelper.getComments();
-        for(Comment c : comments)
-        {
-            if(c.PostId == _post.PostId)
-                postComments.add(c);
-        }
+        ArrayList<Comment> postComments = _post.getComments();
+//        ArrayList<Comment> comments = DataHelper.getComments();
+//        for(Comment c : comments)
+//        {
+//            if(c.PostId == _post.PostId)
+//                postComments.add(c);
+//        }
 
         // Create the recycler view content
-        CommentAdapter adapter = new CommentAdapter(postComments, DataHelper.getUsers());
+        CommentAdapter adapter = new CommentAdapter(postComments);
         RecyclerView commentsListView = findViewById(R.id.comments_listView);
         commentsListView.setAdapter(adapter);
         commentsListView.setLayoutManager(new LinearLayoutManager(this));
@@ -109,26 +139,26 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             @Override // event listener for like button in comment layout
             public void onLikeClick(TextView likeTxt, ImageButton btn, int position)
             {
-                if(btn == null || btn.getTag() == null)
+                Comment comment = postComments.get(position);
+                User currentUser = DataHelper.getCurrentUser();
+                if(btn == null)
                 {
                     Log.e("PostCommentActivity", "The comment like button or his tag is null");
                     return;
                 }
-                if(btn.getTag().equals("false"))
-                {
-                    // like
-                    btn.setImageResource(R.drawable.ic_favorite_white_24dp);
-                    String likes = ++postComments.get(position).Likes + " \"like\"";
-                    likeTxt.setText(likes);
-                    btn.setTag("true");
-                }else
+                if(comment.hasUserLikedThisComment(currentUser.UserId))
                 {
                     // remove like
                     btn.setImageResource(R.drawable.ic_favorite_border_white_24dp);
-                    String likes = --postComments.get(position).Likes + " \"like\"";
-                    likeTxt.setText(likes);
-                    btn.setTag("false");
+                    comment.removeLike(currentUser.UserId);
+                }else
+                {
+                    // like
+                    btn.setImageResource(R.drawable.ic_favorite_white_24dp);
+                    comment.addLike(currentUser.UserId);
                 }
+                String likes = postComments.get(position).getLikesCount() + " \"like\"";
+                likeTxt.setText(likes);
             }
         });
     }
@@ -171,5 +201,26 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
     public void onBackBtnClicked(View view)
     {
         super.onBackPressed();
+    }
+
+    public void onLikeBtnClick(View view)
+    {
+        ImageButton btn = (ImageButton) view;
+        TextView likeTxt = findViewById(R.id.label_likes);
+        User currentUser = DataHelper.getCurrentUser();
+
+        if(_post.hasUserLikedThisPost(currentUser.UserId))
+        {
+            // remove like
+            btn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+            _post.removeLike(currentUser.UserId);
+        }
+        else
+        {
+            // like
+            btn.setImageResource(R.drawable.ic_favorite_black_24dp);
+            _post.addLike(currentUser.UserId);
+        }
+        likeTxt.setText(String.valueOf(_post.getLikesCount()));
     }
 }
