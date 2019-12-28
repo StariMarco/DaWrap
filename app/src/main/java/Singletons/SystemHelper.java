@@ -1,10 +1,17 @@
 package Singletons;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.dawrap.PostCommentsActivity;
+import com.example.dawrap.UserProfileActivity;
 
 public class SystemHelper
 {

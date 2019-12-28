@@ -22,6 +22,9 @@ import Singletons.DataHelper;
 public class SavedPostFragment extends Fragment
 {
     RecyclerView _postListView;
+    ProfilePostsAdapter _adapter;
+    View _notFoundLayout;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -34,6 +37,7 @@ public class SavedPostFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
 
+        _notFoundLayout = view.findViewById(R.id.not_found_layout);
         _postListView = view.findViewById(R.id.usr_saved_post_list);
         ArrayList<Post> userSavedPosts = DataHelper.getCurrentUser().getSavedPosts();
 
@@ -44,17 +48,17 @@ public class SavedPostFragment extends Fragment
         {
             // If the user didn't save any post show the "not found" animation
             _postListView.setVisibility(View.GONE);
-            view.findViewById(R.id.not_found_layout).setVisibility(View.VISIBLE);
+            _notFoundLayout.setVisibility(View.VISIBLE);
         }
     }
 
     private void userPostListViewSetup(@NonNull View view, ArrayList<Post> posts)
     {
-        ProfilePostsAdapter adapter = new ProfilePostsAdapter(posts);
-        _postListView.setAdapter(adapter);
+        _adapter = new ProfilePostsAdapter(posts);
+        _postListView.setAdapter(_adapter);
         _postListView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        adapter.setOnItemClickListener(new ProfilePostsAdapter.OnItemClickListener()
+        _adapter.setOnItemClickListener(new ProfilePostsAdapter.OnItemClickListener()
         {
             @Override
             public void onImageClicked(int position)
@@ -64,5 +68,21 @@ public class SavedPostFragment extends Fragment
                 startActivity(i);
             }
         });
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        if(_adapter != null)
+        {
+            _adapter.notifyDataSetChanged();
+        }
+        if(DataHelper.getCurrentUser().getSavedPosts().size() == 0)
+        {
+            // If there are no saved post then show the "not found" animation
+            _postListView.setVisibility(View.GONE);
+            _notFoundLayout.setVisibility(View.VISIBLE);
+        }
     }
 }

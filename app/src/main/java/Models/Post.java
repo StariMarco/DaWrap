@@ -53,4 +53,9 @@ public class Post implements Serializable
         }
         return false;
     }
+
+    public void addComment(Comment comment)
+    {
+        Comments.add(comment);
+    }
 }

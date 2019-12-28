@@ -1,8 +1,6 @@
 package Adapters;
 
 import android.content.Context;
-import android.os.Build;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +15,9 @@ import com.alexzh.circleimageview.CircleImageView;
 import com.alexzh.circleimageview.ItemSelectedListener;
 import com.example.dawrap.R;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 
 import Models.Comment;
-import Models.Post;
 import Models.User;
 import Singletons.DataHelper;
 
@@ -31,6 +26,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     public interface OnItemClickListener
     {
         void onLikeClick(TextView likeTxt, ImageButton btn, int position);
+        void onProfileImageClick(int position);
     }
 
     private OnItemClickListener mListener;
@@ -62,6 +58,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                     if(position != RecyclerView.NO_POSITION)
                     {
                         listener.onLikeClick(LikesTextView, LikeButton, position);
+                    }
+                }
+            });
+
+            // Click listener for profile image
+            ProfileImage.setOnClickListener(v -> {
+                if(listener != null)
+                {
+                    int position = getAdapterPosition();
+                    if(position != RecyclerView.NO_POSITION)
+                    {
+                        listener.onProfileImageClick(position);
                     }
                 }
             });

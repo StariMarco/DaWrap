@@ -6,8 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".PostCommentsActivity"
     android:clipToPadding="false"
-    android:background="#263238"
-    android:gravity="top">
+    android:background="@color/darkBlue"
+    android:gravity="top"
+    android:clipChildren="false">
 
     <!--                User info + share-->
     <RelativeLayout
@@ -230,9 +231,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
+        android:clipToPadding="false"
         android:paddingHorizontal="15dp"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="10dp"
+        android:clipChildren="false"
+        android:elevation="10dp">
         <androidx.cardview.widget.CardView
+            android:id="@+id/_add_comment_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -244,7 +249,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingVertical="5dp"
-                android:gravity="center_vertical">
+                android:gravity="top">
                 <com.alexzh.circleimageview.CircleImageView
                     android:id="@+id/add_comment_profile_image"
                     android:layout_width="40dp"
@@ -253,13 +258,23 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="5dp"/>
                 <EditText
+                    android:id="@+id/comment_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Add a comment..."
                     android:background="@null"
                     android:fontFamily="@font/roboto"
                     android:textColor="@color/white"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="10dp"
+                    android:paddingTop="10dp"/>
+                <ImageButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_send_blue_24dp"
+                    android:layout_marginLeft="-50dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:background="@null"
+                    android:onClick="onSendCommentClick"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>

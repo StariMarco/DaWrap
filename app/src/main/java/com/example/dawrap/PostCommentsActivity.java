@@ -1,10 +1,19 @@
 package com.example.dawrap;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,9 +29,9 @@ import java.util.ArrayList;
 
 import Adapters.CommentAdapter;
 import Models.Comment;
+import Models.Post;
 import Models.User;
 import Singletons.DataHelper;
-import Models.Post;
 
 public class PostCommentsActivity extends AppCompatActivity implements View.OnTouchListener
 {
@@ -30,6 +39,9 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
     private View _postCard;
     private View _draggableView;
     private View _commentList;
+    private RecyclerView _commentsListView;
+    private EditText _commentTxt;
+    private CommentAdapter _commentAdapter;
     private float _dyPostCard, _dyComments, _bottomPos = -1, _contentHeight;
 
     @Override
@@ -49,6 +61,9 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
 
         // Setup the comment List view
         commentsListViewSetup();
+
+        // Setup the section for writing a comment
+        _commentTxt = findViewById(R.id.comment_edit_text);
     }
 
     private void cardSetup()
@@ -62,8 +77,31 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         ((TextView)findViewById(R.id.label_title)).setText(_post.Title);
 
         // Profile image
-        ((CircleImageView)findViewById(R.id.image_profile)).setImageResource(user.ProfileImage);
-        ((CircleImageView)findViewById(R.id.image_profile)).setOnItemSelectedClickListener(new ItemSelectedListener()
+        CircleImageView profileImgView = findViewById(R.id.image_profile);
+        profileImgView.setImageResource(user.ProfileImage);
+        profileImgView.setOnClickListener(v -> {
+            // Open user profile
+            openUserProfile(user.UserId);
+        });
+        profileImgView.setOnItemSelectedClickListener(new ItemSelectedListener()
+        {
+            @Override
+            public void onSelected(View view)
+            {
+                return;
+            }
+
+            @Override
+            public void onUnselected(View view)
+            {
+                return;
+            }
+        });
+
+        // Add comment profile image
+        CircleImageView addCommentImgView = (CircleImageView) findViewById(R.id.add_comment_profile_image);
+        addCommentImgView.setImageResource(DataHelper.getCurrentUser().ProfileImage);
+        addCommentImgView.setOnItemSelectedClickListener(new ItemSelectedListener()
         {
             @Override
             public void onSelected(View view)
@@ -125,20 +163,14 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
     {
         // Get and filter the comments related to this post
         ArrayList<Comment> postComments = _post.getComments();
-//        ArrayList<Comment> comments = DataHelper.getComments();
-//        for(Comment c : comments)
-//        {
-//            if(c.PostId == _post.PostId)
-//                postComments.add(c);
-//        }
 
         // Create the recycler view content
-        CommentAdapter adapter = new CommentAdapter(postComments);
-        RecyclerView commentsListView = findViewById(R.id.comments_listView);
-        commentsListView.setAdapter(adapter);
-        commentsListView.setLayoutManager(new LinearLayoutManager(this));
+        _commentAdapter = new CommentAdapter(postComments);
+        _commentsListView = findViewById(R.id.comments_listView);
+        _commentsListView.setAdapter(_commentAdapter);
+        _commentsListView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter.setOnItemClickListener(new CommentAdapter.OnItemClickListener()
+        _commentAdapter.setOnItemClickListener(new CommentAdapter.OnItemClickListener()
         {
             @Override // event listener for like button in comment layout
             public void onLikeClick(TextView likeTxt, ImageButton btn, int position)
@@ -163,6 +195,12 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
                 }
                 String likes = postComments.get(position).getLikesCount() + " \"like\"";
                 likeTxt.setText(likes);
+            }
+
+            @Override
+            public void onProfileImageClick(int position)
+            {
+                openUserProfile(postComments.get(position).UserId);
             }
         });
     }
@@ -245,5 +283,33 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             btn.setImageResource(R.drawable.ic_bookmark_black_24dp);
             currentUser.savePost(_post);
         }
+    }
+
+    private void openUserProfile(Integer userId)
+    {
+        Intent i = new Intent(PostCommentsActivity.this, UserProfileActivity.class);
+        i.putExtra("USER_ID", userId);
+        startActivity(i);
+    }
+
+    public void onSendCommentClick(View view)
+    {
+        // Create new comment
+        Comment newComment = new Comment(13, DataHelper.getCurrentUser().UserId, _commentTxt.getText().toString());
+        // Add the comment to the post list
+        _post.addComment(newComment);
+        // Notify changes to the comment list view
+        _commentAdapter.notifyDataSetChanged();
+        _commentsListView.setAdapter(_commentAdapter);
+        // Reset input text view
+        _commentTxt.setText("");
+        // Hide keyboard if opened
+        hideSoftKeyboard(this);
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+
+        InputMethodManager inputMethodManager = (InputMethodManager)activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 }
