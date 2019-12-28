@@ -28,6 +28,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     public interface OnItemClickListener
     {
         void onLikeClick(ImageButton btn, TextView likeTxt, int position);
+        void onSavePostClick(ImageButton btn, int position);
         void onCommentClick(int position);
         void onProfileImageClick(int position);
     }
@@ -46,6 +47,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         public ImageButton LikeBtn;
         public TextView CommentsTextView;
         public ImageButton CommentBtn;
+        public ImageButton SavePostBtn;
 
         public ViewHolder(View itemView, final OnItemClickListener listener)
         {
@@ -60,6 +62,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
             LikeBtn = itemView.findViewById(R.id.btn_like);
             CommentsTextView = itemView.findViewById(R.id.lbl_comment_count);
             CommentBtn = itemView.findViewById(R.id.btn_comment);
+            SavePostBtn = itemView.findViewById(R.id.btn_save_post);
 
             // Click listener for like button
             LikeBtn.setOnClickListener(v -> {
@@ -68,6 +71,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
                     int position = getAdapterPosition();
                     if(position != RecyclerView.NO_POSITION)
                         listener.onLikeClick((ImageButton) v, LikesTextView, position);
+                }
+            });
+
+            // Click listener for save post button
+            SavePostBtn.setOnClickListener(v -> {
+                if(listener != null)
+                {
+                    int position = getAdapterPosition();
+                    if(position != RecyclerView.NO_POSITION)
+                        listener.onSavePostClick((ImageButton) v, position);
                 }
             });
 
@@ -81,6 +94,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
                 }
             });
 
+            // Click listener for profile image button
             ProfileImageView.setOnClickListener(v -> {
                 if(listener != null)
                 {
@@ -167,6 +181,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
         viewHolder.LikesTextView.setText(String.valueOf(post.getLikesCount()));
         viewHolder.CommentsTextView.setText(String.valueOf(post.CommentCount));
+
+        if(currentUser.hasSavedThisPost(post.PostId))
+            viewHolder.SavePostBtn.setImageResource(R.drawable.ic_bookmark_black_24dp);
+        else
+            viewHolder.SavePostBtn.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
 
         viewHolder.ProfileImageView.setOnItemSelectedClickListener(new ItemSelectedListener()
         {

@@ -89,6 +89,10 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         ((TextView)findViewById(R.id.label_likes)).setText(String.valueOf(_post.getLikesCount()));
         // Comments
         ((TextView)findViewById(R.id.label_comments)).setText(String.valueOf(_post.CommentCount));
+
+        // SavedPosts
+        if(DataHelper.getCurrentUser().hasSavedThisPost(_post.PostId))
+            ((ImageButton)findViewById(R.id.save_post_button)).setImageResource(R.drawable.ic_bookmark_black_24dp);
     }
 
     private void postCardAnimationSetup()
@@ -222,5 +226,24 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             _post.addLike(currentUser.UserId);
         }
         likeTxt.setText(String.valueOf(_post.getLikesCount()));
+    }
+
+    public void onSavePostClick(View view)
+    {
+        User currentUser = DataHelper.getCurrentUser();
+        ImageButton btn = (ImageButton) view;
+
+        if(currentUser.hasSavedThisPost(_post.PostId))
+        {
+            // Remove from saved
+            btn.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
+            currentUser.removePost(_post);
+        }
+        else
+        {
+            // Save
+            btn.setImageResource(R.drawable.ic_bookmark_black_24dp);
+            currentUser.savePost(_post);
+        }
     }
 }

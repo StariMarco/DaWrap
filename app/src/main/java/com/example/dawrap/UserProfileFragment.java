@@ -1,34 +1,38 @@
 package com.example.dawrap;
 
-import android.content.Intent;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.alexzh.circleimageview.CircleImageView;
 import com.alexzh.circleimageview.ItemSelectedListener;
 
-import java.util.ArrayList;
-
-import Adapters.PostAdapter;
-import Adapters.ProfilePostsAdapter;
-import Models.Post;
 import Models.User;
 import Singletons.DataHelper;
 
-public class UserProfileFragment extends Fragment
+public class UserProfileFragment extends Fragment implements View.OnClickListener
 {
-    private RecyclerView _postListView;
+    private Button _myPostsBtn, _savedPostsBtn;
+    private Integer _currentFragmentId = R.id.my_posts_btn;
+    private View _fragmentContainer, _myPostsUnderline, _savedPostsUnderline;
+    private float _containerHeight;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -41,9 +45,28 @@ public class UserProfileFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
 
-        userPostListViewSetup(view);
+        userDataSetup(view);
 
-        ((CircleImageView)view.findViewById(R.id.usr_profile_image)).setOnItemSelectedClickListener(new ItemSelectedListener()
+        fragmentButtonsSetup(view, savedInstanceState);
+
+        dropdownMenuSetup(view);
+    }
+
+    private void userDataSetup(@NonNull View view)
+    {
+        User currentUser = DataHelper.getCurrentUser();
+
+        // Username text
+        ((TextView)view.findViewById(R.id.usr_lbl_username)).setText(currentUser.Username);
+
+        // Followers text
+        String followersTxt = currentUser.getFollowerCount() + " followers";
+        ((TextView)view.findViewById(R.id.usr_lbl_followers)).setText(followersTxt);
+
+        // Profile image
+        CircleImageView profileImage = view.findViewById(R.id.usr_profile_image);
+        profileImage.setImageResource(currentUser.ProfileImage);
+        profileImage.setOnItemSelectedClickListener(new ItemSelectedListener()
         {
             @Override
             public void onSelected(View view)
@@ -59,31 +82,117 @@ public class UserProfileFragment extends Fragment
         });
     }
 
-    private void userPostListViewSetup(@NonNull View view)
+    private void fragmentButtonsSetup(@NonNull View view, @Nullable Bundle savedInstanceState)
     {
-        _postListView = view.findViewById(R.id.usr_post_list);
-
-        User currentUser = DataHelper.getCurrentUser();
-        ArrayList<Post> userPosts = new ArrayList<>();
-        for(Post p : DataHelper.getPosts())
+        // Set home fragment as default onCreate
+        if(savedInstanceState == null)
         {
-            if(p.UserId == currentUser.UserId)
-                userPosts.add(p);
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.post_fragment_container, new MyPostFragment()).commit();
         }
 
-        ProfilePostsAdapter adapter = new ProfilePostsAdapter(userPosts);
-        _postListView.setAdapter(adapter);
-        _postListView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        // Get the fragment container of the list views and his height
+        _fragmentContainer = view.findViewById(R.id.post_fragment_container);
+        _fragmentContainer.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            _containerHeight = _fragmentContainer.getHeight();
+        });
 
-        adapter.setOnItemClickListener(new ProfilePostsAdapter.OnItemClickListener()
+        // Get buttons and set this entity as their onCLickListener
+        _myPostsBtn = view.findViewById(R.id.my_posts_btn);
+        _savedPostsBtn = view.findViewById(R.id.saved_posts_btn);
+        _myPostsBtn.setOnClickListener(this);
+        _savedPostsBtn.setOnClickListener(this);
+
+        // Get buttons underlines
+        _myPostsUnderline = view.findViewById(R.id.my_posts_underline);
+        _savedPostsUnderline = view.findViewById(R.id.saved_posts_underline);
+    }
+
+    private void dropdownMenuSetup(@NonNull View view)
+    {
+        // Menu setup
+        ImageButton menuBtn = view.findViewById(R.id.usr_menu);
+        PopupMenu dropDownMenu = new PopupMenu(view.getContext(), menuBtn);
+        Menu menu = dropDownMenu.getMenu();
+
+        // Set the dropdown menu items
+        dropDownMenu.getMenuInflater().inflate(R.menu.user_profile_menu, menu);
+
+        // Set the dropdown menu click listeners
+        dropDownMenu.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.usr_edit_profile)
+            {
+                Log.d("UserProfileFragment", "Edit Profile");
+                return true;
+            }
+            return false;
+        });
+
+        // CLick listener to show the dropdown menu
+        menuBtn.setOnClickListener(v -> {
+            dropDownMenu.show();
+        });
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        // Event Handler for fragment buttons
+        if (_currentFragmentId.equals(v.getId()))
+            return;
+
+        _currentFragmentId = v.getId();
+        switch (v.getId())
+        {
+            case R.id.my_posts_btn: // Posts
+                swapViewAnimation(new MyPostFragment(), _savedPostsUnderline, _myPostsUnderline);
+                break;
+            case R.id.saved_posts_btn: // Saved Posts
+                swapViewAnimation(new SavedPostFragment(), _myPostsUnderline, _savedPostsUnderline);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void swapViewAnimation(Fragment nextFragment, View prevUnderline, View nextUnderline)
+    {
+        // RECYCLERVIEW ANIMATION
+        AnimatorSet animatorSet = new AnimatorSet();
+
+        ObjectAnimator transitionDown = ObjectAnimator.ofFloat(_fragmentContainer, View.TRANSLATION_Y, _containerHeight + 150);
+        transitionDown.setDuration(300);
+        transitionDown.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        // When the animation ends change the fragment inside the view
+        transitionDown.addListener(new AnimatorListenerAdapter()
         {
             @Override
-            public void onImageClicked(int position)
+            public void onAnimationEnd(Animator animation)
             {
-                Intent i = new Intent(getActivity(), PostCommentsActivity.class);
-                i.putExtra("POST_DATA", userPosts.get(position));
-                startActivity(i);
+                super.onAnimationEnd(animation);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.post_fragment_container, nextFragment).commit();
             }
         });
+
+        ObjectAnimator transitionUp = ObjectAnimator.ofFloat(_fragmentContainer, View.TRANSLATION_Y, 0);
+        transitionUp.setDuration(300);
+        transitionUp.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        animatorSet.play(transitionDown).before(transitionUp);
+
+        // BUTTONS UNDERLINE ANIMATION
+        AnimatorSet underlineAnimatorSet = new AnimatorSet();
+        ObjectAnimator disappear = ObjectAnimator.ofFloat(prevUnderline, View.SCALE_X, 0);
+        disappear.setDuration(200);
+        disappear.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        ObjectAnimator appear = ObjectAnimator.ofFloat(nextUnderline, View.SCALE_X, 1);
+        appear.setDuration(200);
+        appear.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        // START ANIMATIONS
+        underlineAnimatorSet.play(disappear).before(appear);
+        animatorSet.start();
+        underlineAnimatorSet.start();
     }
 }

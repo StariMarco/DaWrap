@@ -34,16 +34,6 @@
             android:layout_height="40dp"
             android:src="@drawable/profile_img_test"
             android:layout_centerInParent="true"/>
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_reply_black_24dp"
-            android:scaleX="-1"
-            android:scaleType="fitXY"
-            android:background="@null"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:padding="5dp" />
     </RelativeLayout>
 
     <androidx.cardview.widget.CardView
@@ -179,13 +169,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <ImageButton
+                            android:id="@+id/save_post_button"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_bookmark_border_black_24dp"
                             android:scaleType="fitXY"
                             android:background="@null"
                             android:layout_alignParentRight="true"
-                            android:padding="5dp"/>
+                            android:padding="5dp"
+                            android:onClick="onSavePostClick"/>
                     </RelativeLayout>
                 </LinearLayout>
 

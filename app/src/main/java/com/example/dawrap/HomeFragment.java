@@ -102,6 +102,26 @@ public class HomeFragment extends Fragment
                 likeTxt.setText(String.valueOf(post.getLikesCount()));
             }
 
+            @Override
+            public void onSavePostClick(ImageButton btn, int position)
+            {
+                Post post = DataHelper.getPosts().get(position);
+                User currentUser = DataHelper.getCurrentUser();
+
+                if(currentUser.hasSavedThisPost(post.PostId))
+                {
+                    // Remove from saved
+                    btn.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
+                    currentUser.removePost(post);
+                }
+                else
+                {
+                    // Save
+                    btn.setImageResource(R.drawable.ic_bookmark_black_24dp);
+                    currentUser.savePost(post);
+                }
+            }
+
             @Override // event listener for view comment button in post layout
             public void onCommentClick(int position)
             {

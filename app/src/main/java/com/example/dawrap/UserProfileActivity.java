@@ -1,16 +1,17 @@
 package com.example.dawrap;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.alexzh.circleimageview.CircleImageView;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,7 @@ public class UserProfileActivity extends AppCompatActivity
     private User _user;
     private ArrayList<Post> _posts;
     private RecyclerView _postListView;
+    private TextView _followersText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -68,15 +70,59 @@ public class UserProfileActivity extends AppCompatActivity
 
     private void userDataSetup()
     {
+        // Profile Image
         ((CircleImageView) findViewById(R.id.usr_profile_image)).setImageResource(_user.ProfileImage);
+        // Username text
         ((TextView) findViewById(R.id.usr_username_txt)).setText(_user.Username);
-        String txtPostCount = _posts.size() + " post";
-        ((TextView) findViewById(R.id.usr_post_count_txt)).setText(txtPostCount);
+        // Followers text
+        String txtFollowerCount = _user.getFollowerCount() + " followers";
+        _followersText = findViewById(R.id.usr_followers_txt);
+        _followersText.setText(txtFollowerCount);
+        // Description text
         ((TextView) findViewById(R.id.usr_description_txt)).setText(_user.Description);
+
+        // Follow button
+        MaterialButton followerBtn = findViewById(R.id.follow_btn);
+        if(DataHelper.getCurrentUser().UserId.equals(_user.UserId))
+        {
+            followerBtn.setEnabled(false);
+            followerBtn.setText("Your Profile");
+        }
+        else if(DataHelper.getCurrentUser().followsUserWithId(_user.UserId))
+        {
+            followerBtn.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+            followerBtn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+            followerBtn.setText("Unfollow");
+        }
     }
 
     public void onBackBtnClicked(View view)
     {
         super.onBackPressed();
+    }
+
+    public void onFollowClick(View view)
+    {
+        MaterialButton btn = (MaterialButton) view;
+        User currentUser = DataHelper.getCurrentUser();
+        if(currentUser.followsUserWithId(_user.UserId))
+        {
+            // Unfollow
+            btn.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+            btn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+            btn.setText("Follow");
+            currentUser.unfollow(_user);
+        }
+        else
+        {
+            // Follow
+            btn.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+            btn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+            btn.setText("Unfollow");
+            currentUser.follow(_user);
+        }
+
+        String txtFollowerCount = _user.getFollowerCount() + " followers";
+        _followersText.setText(txtFollowerCount);
     }
 }
