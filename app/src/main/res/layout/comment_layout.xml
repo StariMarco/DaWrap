@@ -59,5 +59,18 @@
             android:layout_below="@id/TextAndName_layout"
             android:layout_toRightOf="@id/comment_profileImg"
             android:layout_marginLeft="10dp"/>
+
+        <TextView
+            android:id="@+id/btn_delete_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_gravity="center_vertical"
+            android:text="Delete"
+            android:textColor="@color/white"
+            android:layout_below="@id/TextAndName_layout"
+            android:layout_toRightOf="@id/lbl_commentLikes"
+            android:layout_marginLeft="20dp"
+            android:visibility="gone"/>
     </RelativeLayout>
 </LinearLayout>

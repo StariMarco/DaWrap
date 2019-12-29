@@ -1,17 +1,11 @@
 package Singletons;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
+import android.text.Editable;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.dawrap.PostCommentsActivity;
-import com.example.dawrap.UserProfileActivity;
 
 public class SystemHelper
 {
@@ -49,5 +43,18 @@ public class SystemHelper
         WindowManager wm = (WindowManager) context.getSystemService(context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         return display.getHeight();
+    }
+
+    public static boolean isInputReady(Editable s, int maxChars)
+    {
+        // If the string is empty
+        if(s == null || s.toString().isEmpty())
+            return false;
+
+        // If the string is out of bounds
+        if(s.length() > maxChars)
+            return false;
+
+        return true;
     }
 }

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateImagePost">
+
+    <!--    Top Nav-->
+    <RelativeLayout
+        android:id="@+id/image_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Image Post"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="@dimen/fontSizeTitle"
+            android:fontFamily="@font/roboto_bold"
+            android:layout_centerInParent="true"
+            android:background="@null"/>
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back_black_24dp"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:onClick="onBackBtnCLick"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/image_post_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Post"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:fontFamily="@font/roboto_bold"
+            android:layout_marginRight="5dp"
+            android:enabled="false"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:onClick="onImagePostClick"/>
+    </RelativeLayout>
+
+    <!--    Title input-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/image_input_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Title"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        app:counterEnabled="true"
+        app:counterMaxLength="200"
+        app:counterOverflowTextColor="@color/red"
+        android:layout_below="@id/image_title_layout"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/image_input_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:inputType="text"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:background="@null"
+        android:maxHeight="300dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/image_input_title_layout"
+        android:layout_margin="10dp"/>
+
+</RelativeLayout>

@@ -14,7 +14,8 @@
         android:textAllCaps="false"
         style="@style/backdrop_button"
         android:backgroundTintMode="src_over"
-        android:backgroundTint="@color/colorPrimaryLight"/>
+        android:backgroundTint="@color/colorPrimaryLight"
+        android:onClick="onImagePostClick"/>
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
@@ -23,6 +24,7 @@
         android:textAllCaps="false"
         style="@style/backdrop_button"
         android:backgroundTintMode="src_over"
-        android:backgroundTint="@color/colorPrimaryLight"/>
+        android:backgroundTint="@color/colorPrimaryLight"
+        android:onClick="onCreateTextPostClick"/>
 
 </LinearLayout>

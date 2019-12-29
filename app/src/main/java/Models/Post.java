@@ -58,4 +58,9 @@ public class Post implements Serializable
     {
         Comments.add(comment);
     }
+
+    public void deleteComment(Comment comment)
+    {
+        Comments.remove(comment);
+    }
 }

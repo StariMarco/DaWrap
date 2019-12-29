@@ -4,7 +4,9 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -202,6 +204,29 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             {
                 openUserProfile(postComments.get(position).UserId);
             }
+
+            @Override
+            public void onDeleteClick(int position)
+            {
+                Comment comment = postComments.get(position);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(PostCommentsActivity.this);
+                builder.setTitle("Delete comment");
+                builder.setMessage("Do you want to delete this comment?");
+                builder.setPositiveButton("Confirm", (dialog, which) -> {
+                    _post.deleteComment(comment);
+                    // Notify changes to the comment list view
+                    _commentAdapter.notifyDataSetChanged();
+                    _commentsListView.setAdapter(_commentAdapter);
+                });
+
+                builder.setNegativeButton("Cancel", (dialog, which) -> {
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }
         });
     }
 
@@ -294,8 +319,11 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
 
     public void onSendCommentClick(View view)
     {
+        String text = _commentTxt.getText().toString();
+        if(text.isEmpty())
+            return;
         // Create new comment
-        Comment newComment = new Comment(13, DataHelper.getCurrentUser().UserId, _commentTxt.getText().toString());
+        Comment newComment = new Comment(13, DataHelper.getCurrentUser().UserId, text);
         // Add the comment to the post list
         _post.addComment(newComment);
         // Notify changes to the comment list view

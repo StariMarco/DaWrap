@@ -27,6 +27,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     {
         void onLikeClick(TextView likeTxt, ImageButton btn, int position);
         void onProfileImageClick(int position);
+        void onDeleteClick(int position);
     }
 
     private OnItemClickListener mListener;
@@ -39,6 +40,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         public TextView TextTextView;
         public TextView LikesTextView;
         public ImageButton LikeButton;
+        public TextView DeleteBtn;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener listener)
         {
@@ -49,6 +51,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             TextTextView = itemView.findViewById(R.id.lbl_commentText);
             LikesTextView = itemView.findViewById(R.id.lbl_commentLikes);
             LikeButton = itemView.findViewById(R.id.btnCommentLike);
+            DeleteBtn = itemView.findViewById(R.id.btn_delete_comment);
 
             // Click listener for comment like button
             LikeButton.setOnClickListener(v -> {
@@ -70,6 +73,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                     if(position != RecyclerView.NO_POSITION)
                     {
                         listener.onProfileImageClick(position);
+                    }
+                }
+            });
+
+            // Click listener for delete button
+            DeleteBtn.setOnClickListener(v -> {
+                if(listener != null)
+                {
+                    int position = getAdapterPosition();
+                    if(position != RecyclerView.NO_POSITION)
+                    {
+                        listener.onDeleteClick(position);
                     }
                 }
             });
@@ -138,6 +153,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 return;
             }
         });
+
+        if(currentUser.UserId.equals(comment.UserId))
+            holder.DeleteBtn.setVisibility(View.VISIBLE);
     }
 
     @Override

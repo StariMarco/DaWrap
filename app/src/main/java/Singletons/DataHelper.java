@@ -15,7 +15,6 @@ public class DataHelper
     private static User _currentUser;
     private static ArrayList<Post> _posts;
     private static ArrayList<User> _users;
-    private static ArrayList<Integer> _likesId;
 
     public static void initInstance()
     {
@@ -24,7 +23,6 @@ public class DataHelper
             instance = new DataHelper();
             _posts = setPosts();
             _users = setUsers();
-            _likesId = new ArrayList<>();
             _currentUser = new User(0, "Marco", R.drawable.profile_img_test, "Questa è una prova per una possibile descrizione di un profilo utente");
         }
 
@@ -66,28 +64,6 @@ public class DataHelper
             if(p.PostId == id) return p;
         }
         return null;
-    }
-
-    public static boolean hasLikedPostWithId(int postId)
-    {
-        for(Integer likeId : _likesId)
-        {
-            if(likeId == postId)
-                return true;
-        }
-        return false;
-    }
-
-    public static void addLike(int id)
-    {
-        if (!hasLikedPostWithId(id))
-            _likesId.add(id);
-    }
-
-    public static void removeLike(Integer id)
-    {
-        if (hasLikedPostWithId(id))
-            _likesId.remove(id);
     }
 
     private static ArrayList<Post> setPosts()

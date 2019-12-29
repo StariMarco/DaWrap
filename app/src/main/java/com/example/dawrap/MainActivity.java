@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -165,5 +166,15 @@ public class MainActivity extends AppCompatActivity
         fragmentTransitionAnimatorSet.play(transitionUp).before(transitionDown);
         fragmentTransitionAnimatorSet.play(finalBounce).after(transitionDown);
         fragmentTransitionAnimatorSet.start();
+    }
+
+    public void onCreateTextPostClick(View view)
+    {
+        startActivity(new Intent(MainActivity.this, CreateTextPost.class));
+    }
+
+    public void onImagePostClick(View view)
+    {
+        startActivity(new Intent(MainActivity.this, CreateImagePost.class));
     }
 }
