@@ -17,14 +17,14 @@ public class Post implements Serializable
     public Integer CommentCount = 0;
     public ArrayList<Comment> Comments;
 
-    public Post(String postId, String userId, String title, String description, Bitmap postImage, ArrayList<Comment> comments)
+    public Post(String postId, String userId, String title, String description, Bitmap postImage, ArrayList<String> likes, ArrayList<Comment> comments)
     {
         this.PostId = postId;
         this.UserId = userId;
         this.Title = title;
         this.Description = description;
         this.Image = postImage;
-        this.Likes = new ArrayList<>();
+        this.Likes = likes;
         this.Comments = comments;
     }
 

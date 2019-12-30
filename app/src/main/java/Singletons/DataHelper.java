@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.example.dawrap.R;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 
@@ -14,6 +16,9 @@ import Models.User;
 public class DataHelper
 {
     public static DataHelper instance;
+
+    public static FirebaseFirestore db;
+    public static FirebaseStorage storage;
 
     private static User _currentUser;
     private static ArrayList<Post> _posts;
@@ -26,6 +31,8 @@ public class DataHelper
         if(instance == null)
         {
             instance = new DataHelper();
+            db = FirebaseFirestore.getInstance();
+            storage = FirebaseStorage.getInstance();
         }
 
 
@@ -103,21 +110,21 @@ public class DataHelper
         mattiaComments.add(new Comment("10", "4", "Marcello what u doing?"));
 
 
-        list.add(new Post("0", "0", "Titolo Marco", null, _testImages.get(0), marcoComments));
+        list.add(new Post("0", "0", "Titolo Marco", null, _testImages.get(0), new ArrayList<>(), marcoComments));
         list.add(new Post("1", "1", "Titolo Pippo", "test_description\">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n" +
-           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", null, pippoComments));
-        list.add(new Post("2", "2", "Titolo Paolo", null, _testImages.get(1), paoloComments));
-        list.add(new Post("3", "3", "Titolo Rossi", null, _testImages.get(2), rossiComments));
-        list.add(new Post("4", "4", "Titolo Mattia", "Descrizione Mattia", null, mattiaComments));
-        list.add(new Post("5", "0", "Titolo Marco", null, _testImages.get(1), new ArrayList<>()));
-        list.add(new Post("6", "0", "Titolo Marco", null, _testImages.get(2), new ArrayList<>()));
-        list.add(new Post("7", "0", "Titolo Marco", null, _testImages.get(0), new ArrayList<>()));
-        list.add(new Post("8", "0", "Titolo Marco", null, _testImages.get(2), new ArrayList<>()));
-        list.add(new Post("9", "0", "Titolo Marco", null, _testImages.get(1), new ArrayList<>()));
-        list.add(new Post("10", "0", "Titolo Marco", null, _testImages.get(2), new ArrayList<>()));
-        list.add(new Post("11", "0", "Titolo Marco", null, _testImages.get(0), new ArrayList<>()));
-        list.add(new Post("12", "0", "Titolo Marco", null, _testImages.get(1), new ArrayList<>()));
-        list.add(new Post("13", "1", "Titolo Paolo", null, _testImages.get(1), new ArrayList<>()));
+           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", null, new ArrayList<>(), pippoComments));
+        list.add(new Post("2", "2", "Titolo Paolo", null, _testImages.get(1), new ArrayList<>(), paoloComments));
+        list.add(new Post("3", "3", "Titolo Rossi", null, _testImages.get(2), new ArrayList<>(), rossiComments));
+        list.add(new Post("4", "4", "Titolo Mattia", "Descrizione Mattia", null, new ArrayList<>(), mattiaComments));
+        list.add(new Post("5", "0", "Titolo Marco", null, _testImages.get(1), new ArrayList<>(), new ArrayList<>()));
+        list.add(new Post("6", "0", "Titolo Marco", null, _testImages.get(2), new ArrayList<>(), new ArrayList<>()));
+        list.add(new Post("7", "0", "Titolo Marco", null, _testImages.get(0), new ArrayList<>(), new ArrayList<>()));
+        list.add(new Post("8", "0", "Titolo Marco", null, _testImages.get(2), new ArrayList<>(), new ArrayList<>()));
+        list.add(new Post("9", "0", "Titolo Marco", null, _testImages.get(1), new ArrayList<>(), new ArrayList<>()));
+        list.add(new Post("10", "0", "Titolo Marco", null, _testImages.get(2), new ArrayList<>(), new ArrayList<>()));
+        list.add(new Post("11", "0", "Titolo Marco", null, _testImages.get(0), new ArrayList<>(), new ArrayList<>()));
+        list.add(new Post("12", "0", "Titolo Marco", null, _testImages.get(1), new ArrayList<>(), new ArrayList<>()));
+        list.add(new Post("13", "1", "Titolo Paolo", null, _testImages.get(1), new ArrayList<>(), new ArrayList<>()));
         return list;
     }
 

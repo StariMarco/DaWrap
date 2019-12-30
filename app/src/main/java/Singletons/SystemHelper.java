@@ -1,11 +1,13 @@
 package Singletons;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.Editable;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 public class SystemHelper
 {
@@ -56,5 +58,11 @@ public class SystemHelper
             return false;
 
         return true;
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+
+        InputMethodManager inputMethodManager = (InputMethodManager)activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 }

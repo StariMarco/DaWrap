@@ -34,6 +34,7 @@ import Models.Comment;
 import Models.Post;
 import Models.User;
 import Singletons.DataHelper;
+import Singletons.SystemHelper;
 
 public class PostCommentsActivity extends AppCompatActivity implements View.OnTouchListener
 {
@@ -332,12 +333,6 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         // Reset input text view
         _commentTxt.setText("");
         // Hide keyboard if opened
-        hideSoftKeyboard(this);
-    }
-
-    public static void hideSoftKeyboard(Activity activity) {
-
-        InputMethodManager inputMethodManager = (InputMethodManager)activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        SystemHelper.hideSoftKeyboard(this);
     }
 }

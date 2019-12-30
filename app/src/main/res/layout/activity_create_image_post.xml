@@ -94,4 +94,37 @@
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:onClick="onChangeImageClick"/>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/image_uploading_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        app:cardElevation="8dp"
+        android:layout_margin="50dp"
+        app:cardCornerRadius="16dp"
+        android:visibility="gone">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                app:lottie_rawRes="@raw/uploading"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"/>
+            <TextView
+                android:id="@+id/image_uploading_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Uploading 0%"
+                android:fontFamily="@font/roboto"
+                android:textColor="@color/colorTextPrimary"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
 </RelativeLayout>

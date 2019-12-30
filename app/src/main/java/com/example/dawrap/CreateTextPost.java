@@ -1,5 +1,6 @@
 package com.example.dawrap;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -17,13 +20,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import Models.Comment;
 import Models.Post;
+import Models.User;
 import Singletons.DataHelper;
 import Singletons.SystemHelper;
 
 public class CreateTextPost extends AppCompatActivity
 {
+    private static final String TAG = "CreateTextPost";
 
     private TextInputEditText _titleTxt, _descriptionTxt;
     private MaterialButton _postBtn;
@@ -99,9 +106,28 @@ public class CreateTextPost extends AppCompatActivity
     public void onTextPostClick(View view)
     {
         // Create the post
-        Post newPost = new Post("15", DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), _descriptionTxt.getText().toString(), null, new ArrayList<>());
+        String uniqueId = UUID.randomUUID().toString();
+        Post newPost = new Post(uniqueId, DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), _descriptionTxt.getText().toString(), null, new ArrayList<>(), new ArrayList<>());
         DataHelper.getPosts().add(0, newPost);
 
-        super.onBackPressed();
+        // Firebase Firestore
+        Map<String, Object> post = new HashMap<>();
+        post.put("postId", uniqueId);
+        post.put("userId", DataHelper.getCurrentUser().UserId);
+        post.put("title", _titleTxt.getText().toString());
+        post.put("description", _descriptionTxt.getText().toString());
+        post.put("image", null);
+        post.put("likes", new ArrayList<String>());
+        post.put("comments", new ArrayList<Comment>());
+
+        DataHelper.db.collection("posts").document(uniqueId).set(post)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Post document added: " + uniqueId);
+                    super.onBackPressed();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error adding document", e);
+                    super.onBackPressed();
+                });
     }
 }

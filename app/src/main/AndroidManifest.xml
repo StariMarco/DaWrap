@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".CreateImagePost"></activity>
+        <activity android:name=".CreateImagePost"/>
         <activity
             android:name=".CreateTextPost"
             android:parentActivityName=".MainActivity" />

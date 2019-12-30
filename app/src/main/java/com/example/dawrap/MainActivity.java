@@ -50,6 +50,15 @@ public class MainActivity extends AppCompatActivity
         setTestImages();
     }
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        // Reset the backdrop if the user comes from another page
+        if (_backdropShown[0])
+            _bottomNavigationView.findViewById(R.id.nav_new_post).performClick();
+    }
+
     private void setupBottomNavigation(Bundle savedInstanceState)
     {
         _bottomNavigationView = findViewById(R.id.bottom_navigation);

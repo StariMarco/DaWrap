@@ -1,5 +1,6 @@
 package com.example.dawrap;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,22 +12,34 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
+import Models.Comment;
 import Models.Post;
 import Singletons.DataHelper;
 import Singletons.SystemHelper;
 
 public class CreateImagePost extends AppCompatActivity
 {
+    private static final String TAG = "CreateImagePost";
 
     private final int TITLE_MAX_CHARS = 200;
     private final int PICK_IMAGE = 1;
@@ -34,6 +47,9 @@ public class CreateImagePost extends AppCompatActivity
     private ImageView _imageView;
     private TextInputEditText _titleTxt;
     private MaterialButton _postBtn;
+    private String _uniqueId;
+    private View _loadingCard;
+    private TextView _uploadingText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,6 +57,7 @@ public class CreateImagePost extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_image_post);
 
+        _uploadingText = findViewById(R.id.image_uploading_text);
         _imageView = findViewById(R.id.image_view);
         _postBtn = findViewById(R.id.image_post_button);
         _titleTxt = findViewById(R.id.image_input_title);
@@ -127,9 +144,69 @@ public class CreateImagePost extends AppCompatActivity
     public void onImagePostClick(View view)
     {
         // Create the post
-        Post newPost = new Post("16", DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), null, _imageBitmap, new ArrayList<>());
+        _uniqueId = UUID.randomUUID().toString();
+        Post newPost = new Post(_uniqueId, DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), null, _imageBitmap, new ArrayList<>(), new ArrayList<>());
         DataHelper.getPosts().add(0, newPost);
-        super.onBackPressed();
+
+        // Firebase Storage
+        uploadImageToFirestore();
+
+        // Hide keyboard and show loading animation
+        SystemHelper.hideSoftKeyboard(this);
+        _loadingCard = findViewById(R.id.image_uploading_card);
+        _loadingCard.setVisibility(View.VISIBLE);
+        // Disable user interactions
+        _postBtn.setEnabled(false);
+        _titleTxt.setEnabled(false);
+    }
+
+    private void uploadImageToFirestore()
+    {
+        StorageReference storageReference = DataHelper.storage.getReference();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        _imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        StorageReference postImagesRef = storageReference.child("postImages/" + _uniqueId);
+        UploadTask uploadTask = postImagesRef.putBytes(data);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            Log.d(TAG, "image uploaded successfully: " + taskSnapshot.getMetadata().getPath());
+            // Firebase Firestore
+            uploadPostToFirstore(_uniqueId, taskSnapshot.getMetadata().getPath());
+
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Failed to upload image: ", e);
+        }).addOnProgressListener(taskSnapshot -> {
+            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+            DecimalFormat df = new DecimalFormat("#0");
+            String progressTxt = "Uploading " + df.format(progress) + "%";
+            _uploadingText.setText(progressTxt);
+            Log.d(TAG, "Progress: " + progressTxt);
+        });
+    }
+
+    private void uploadPostToFirstore(String uniqueId, String path)
+    {
+        Map<String, Object> post = new HashMap<>();
+        post.put("postId", uniqueId);
+        post.put("userId", DataHelper.getCurrentUser().UserId);
+        post.put("title", _titleTxt.getText().toString());
+        post.put("description", null);
+        post.put("image", path);
+        post.put("likes", new ArrayList<String>());
+        post.put("comments", new ArrayList<Comment>());
+
+        DataHelper.db.collection("posts").document(uniqueId).set(post)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Post document added: " + uniqueId);
+                    _loadingCard.setVisibility(View.GONE);
+                    super.onBackPressed();
+                })
+                .addOnFailureListener(e -> {
+                    Log.d(TAG, "Error adding document", e);
+                    _loadingCard.setVisibility(View.GONE);
+                    super.onBackPressed();
+                });
     }
 
     public void onChangeImageClick(View view)
