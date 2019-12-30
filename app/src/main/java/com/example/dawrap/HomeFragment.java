@@ -16,6 +16,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+
 import Adapters.PostAdapter;
 import Models.Post;
 import Models.User;
@@ -23,6 +27,8 @@ import Singletons.DataHelper;
 
 public class HomeFragment extends Fragment
 {
+    private static final String TAG = "HomeFragment";
+
     private RecyclerView _postListView;
     private PostAdapter _adapter;
 
@@ -40,13 +46,33 @@ public class HomeFragment extends Fragment
 
         setBackgroundShape(view);
 
-        postListViewSetup(view);
+        if(DataHelper._posts.size() > 0)
+        {
+            postListViewSetup(view);
+            return;
+        }
+        DataHelper.db.collection("posts")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful())
+                    {
+                        for (QueryDocumentSnapshot document : task.getResult())
+                        {
+                            DataHelper._posts.add(document.toObject(Post.class));
+                            Log.d(TAG, document.getId() + " => " + document.toObject(Post.class));
+                            postListViewSetup(view);
+                        }
+                    }
+                    else Log.e(TAG, "Error getting documents: ", task.getException());
+                });
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
+        if(_adapter == null && _postListView == null) return;
+
         _adapter.notifyDataSetChanged();
         _postListView.setAdapter(_adapter);
     }
@@ -99,7 +125,7 @@ public class HomeFragment extends Fragment
                 {
                     Log.e("HomeFragment", "Error in onLikeClick");
                 }
-                likeTxt.setText(String.valueOf(post.getLikesCount()));
+                likeTxt.setText(String.valueOf(post.getLikes().size()));
             }
 
             @Override
@@ -108,7 +134,7 @@ public class HomeFragment extends Fragment
                 Post post = DataHelper.getPosts().get(position);
                 User currentUser = DataHelper.getCurrentUser();
 
-                if(currentUser.hasSavedThisPost(post.PostId))
+                if(currentUser.hasSavedThisPost(post.postId))
                 {
                     // Remove from saved
                     btn.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
@@ -126,7 +152,7 @@ public class HomeFragment extends Fragment
             public void onCommentClick(int position)
             {
                 Intent i = new Intent(getActivity(), PostCommentsActivity.class);
-                i.putExtra("POST_ID", DataHelper.getPosts().get(position).PostId);
+                i.putExtra("POST_ID", DataHelper.getPosts().get(position).postId);
                 startActivity(i);
             }
 
@@ -134,7 +160,7 @@ public class HomeFragment extends Fragment
             public void onProfileImageClick(int position)
             {
                 Post post = DataHelper.getPosts().get(position);
-                User user = DataHelper.getUserById(post.UserId);
+                User user = DataHelper.getUserById(post.userId);
 
                 Intent i = new Intent(getActivity(), UserProfileActivity.class);
                 i.putExtra("USER_ID", user.UserId);

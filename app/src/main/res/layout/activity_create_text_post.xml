@@ -48,7 +48,7 @@
             android:onClick="onTextPostClick"/>
     </RelativeLayout>
 
-<!--    Title input-->
+<!--    title input-->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_title_layout"
         android:layout_width="match_parent"
@@ -70,7 +70,7 @@
             android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!--    Title input-->
+    <!--    title input-->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_description_layout"
         android:layout_width="match_parent"

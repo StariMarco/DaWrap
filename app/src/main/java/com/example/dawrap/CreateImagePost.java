@@ -96,7 +96,7 @@ public class CreateImagePost extends AppCompatActivity
         pickIntent.setType("image/*");
 
         // Allow the user to choose which gallery app use to pick the image
-        Intent chooserIntent = Intent.createChooser(intent, "Select Image");
+        Intent chooserIntent = Intent.createChooser(intent, "Select image");
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
 
         startActivityForResult(chooserIntent, PICK_IMAGE);
@@ -145,8 +145,8 @@ public class CreateImagePost extends AppCompatActivity
     {
         // Create the post
         _uniqueId = UUID.randomUUID().toString();
-        Post newPost = new Post(_uniqueId, DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), null, _imageBitmap, new ArrayList<>(), new ArrayList<>());
-        DataHelper.getPosts().add(0, newPost);
+//        Post newPost = new Post(_uniqueId, DataHelper.getCurrentUser().userId, _titleTxt.getText().toString(), null, "", new ArrayList<>(), new ArrayList<>());
+//        DataHelper.getPosts().add(0, newPost);
 
         // Firebase Storage
         uploadImageToFirestore();
@@ -177,6 +177,7 @@ public class CreateImagePost extends AppCompatActivity
         }).addOnFailureListener(e -> {
             Log.e(TAG, "Failed to upload image: ", e);
         }).addOnProgressListener(taskSnapshot -> {
+            // Get upload progress
             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
             DecimalFormat df = new DecimalFormat("#0");
             String progressTxt = "Uploading " + df.format(progress) + "%";

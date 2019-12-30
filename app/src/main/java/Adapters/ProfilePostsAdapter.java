@@ -1,6 +1,7 @@
 package Adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,12 @@ import com.example.dawrap.R;
 import java.util.List;
 
 import Models.Post;
+import Singletons.DataHelper;
 
 public class ProfilePostsAdapter extends RecyclerView.Adapter<ProfilePostsAdapter.ViewHolder>
 {
+    private static final String TAG = "ProfilePostsAdapter";
+    
     public interface OnItemClickListener
     {
         void onImageClicked(int position);
@@ -88,15 +92,15 @@ public class ProfilePostsAdapter extends RecyclerView.Adapter<ProfilePostsAdapte
         Post post = posts.get(position);
 
         // Set all properties
-        if(post.Image != null)
+        if(post.image != null)
         {
-            viewHolder.Image.setImageBitmap(post.Image);
+            DataHelper.downloadImageIntoView(viewHolder.Image, post.image, TAG, R.drawable.post_img_test_3);
             viewHolder.DescriptionTxt.setVisibility(View.GONE);
         }
         else
         {
             viewHolder.Image.setVisibility(View.GONE);
-            viewHolder.DescriptionTxt.setText(post.Description);
+            viewHolder.DescriptionTxt.setText(post.description);
         }
     }
     @Override

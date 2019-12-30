@@ -12,6 +12,8 @@ public class Comment implements Serializable
     public Date Date;
     public ArrayList<String> Likes;
 
+    public Comment(){}
+
     public Comment(String commentId, String userId, String text)
     {
         this.CommentId = commentId;

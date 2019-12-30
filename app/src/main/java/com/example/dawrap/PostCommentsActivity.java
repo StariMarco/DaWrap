@@ -1,20 +1,12 @@
 package com.example.dawrap;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -38,6 +30,8 @@ import Singletons.SystemHelper;
 
 public class PostCommentsActivity extends AppCompatActivity implements View.OnTouchListener
 {
+    private static final String TAG = "PostCommentsActivity";
+
     private Post _post;
     private View _postCard;
     private View _draggableView;
@@ -71,13 +65,17 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
 
     private void cardSetup()
     {
-        User user = DataHelper.getUserById(_post.UserId);
+        User user = DataHelper.getUserById(_post.userId);
         // Setup the post card content
-        if(_post.Image != null)
-            ((ImageView)findViewById(R.id.image_post)).setImageBitmap(_post.Image);
+        if(_post.image != null)
+        {
+            // Set image from db here
+            ImageView postImageView = findViewById(R.id.image_post);
+            DataHelper.downloadImageIntoView(postImageView, _post.image, TAG, R.drawable.post_img_test_3);
+        }
 
-        // Title
-        ((TextView)findViewById(R.id.label_title)).setText(_post.Title);
+        // title
+        ((TextView)findViewById(R.id.label_title)).setText(_post.title);
 
         // Profile image
         CircleImageView profileImgView = findViewById(R.id.image_profile);
@@ -119,20 +117,20 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             }
         });
 
-        // Description
-        if(!(_post.Description == null || _post.Description.isEmpty()))
-            ((TextView)findViewById(R.id.label_description)).setText(_post.Description);
+        // description
+        if(!(_post.description == null || _post.description.isEmpty()))
+            ((TextView)findViewById(R.id.label_description)).setText(_post.description);
 
-        // Likes
+        // likes
         if(_post.hasUserLikedThisPost(DataHelper.getCurrentUser().UserId))
             ((ImageButton)findViewById(R.id.like_button)).setImageResource(R.drawable.ic_favorite_black_24dp);
 
-        ((TextView)findViewById(R.id.label_likes)).setText(String.valueOf(_post.getLikesCount()));
-        // Comments
-        ((TextView)findViewById(R.id.label_comments)).setText(String.valueOf(_post.CommentCount));
+        ((TextView)findViewById(R.id.label_likes)).setText(String.valueOf(_post.getLikes().size()));
+        // comments
+        ((TextView)findViewById(R.id.label_comments)).setText(String.valueOf(_post.getComments().size()));
 
         // SavedPosts
-        if(DataHelper.getCurrentUser().hasSavedThisPost(_post.PostId))
+        if(DataHelper.getCurrentUser().hasSavedThisPost(_post.postId))
             ((ImageButton)findViewById(R.id.save_post_button)).setImageResource(R.drawable.ic_bookmark_black_24dp);
     }
 
@@ -149,7 +147,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
 
         // Get post content height
         imageLayout.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            if (_post.Description == null)
+            if (_post.description == null)
             {
                 _contentHeight = imageLayout.getHeight();
                 descriptionLayout.setVisibility(View.GONE);
@@ -289,7 +287,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             btn.setImageResource(R.drawable.ic_favorite_black_24dp);
             _post.addLike(currentUser.UserId);
         }
-        likeTxt.setText(String.valueOf(_post.getLikesCount()));
+        likeTxt.setText(String.valueOf(_post.getLikes().size()));
     }
 
     public void onSavePostClick(View view)
@@ -297,7 +295,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         User currentUser = DataHelper.getCurrentUser();
         ImageButton btn = (ImageButton) view;
 
-        if(currentUser.hasSavedThisPost(_post.PostId))
+        if(currentUser.hasSavedThisPost(_post.postId))
         {
             // Remove from saved
             btn.setImageResource(R.drawable.ic_bookmark_border_black_24dp);

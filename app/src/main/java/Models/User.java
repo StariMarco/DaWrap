@@ -29,7 +29,7 @@ public class User implements Serializable
     {
         for(Post p : SavedPosts)
         {
-            if(postId.equals(p.PostId))
+            if(postId.equals(p.postId))
                 return true;
         }
         return false;

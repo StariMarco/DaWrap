@@ -107,8 +107,8 @@ public class CreateTextPost extends AppCompatActivity
     {
         // Create the post
         String uniqueId = UUID.randomUUID().toString();
-        Post newPost = new Post(uniqueId, DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), _descriptionTxt.getText().toString(), null, new ArrayList<>(), new ArrayList<>());
-        DataHelper.getPosts().add(0, newPost);
+//        Post newPost = new Post(uniqueId, DataHelper.getCurrentUser().userId, _titleTxt.getText().toString(), _descriptionTxt.getText().toString(), null, new ArrayList<>(), new ArrayList<>());
+//        DataHelper.getPosts().add(0, newPost);
 
         // Firebase Firestore
         Map<String, Object> post = new HashMap<>();

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -24,15 +25,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
+import Models.Post;
 import Singletons.DataHelper;
 import Models.NavigationIconClickListener;
 import Singletons.SystemHelper;
 
 public class MainActivity extends AppCompatActivity
 {
+    private static final String TAG = "MainActivity";
+
     private LinearLayout _backdropContentView;
     private boolean[] _backdropShown = {false};
     private BottomNavigationView _bottomNavigationView;
@@ -42,12 +47,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setupBottomNavigation(savedInstanceState);
-
         // Init singletons
         DataHelper.initInstance();
         SystemHelper.initInstance();
-        setTestImages();
+
+        setupBottomNavigation(savedInstanceState);
     }
 
     @Override
@@ -190,17 +194,5 @@ public class MainActivity extends AppCompatActivity
     public void onImagePostClick(View view)
     {
         startActivity(new Intent(MainActivity.this, CreateImagePost.class));
-    }
-
-    private void setTestImages()
-    {
-        Bitmap img1 = BitmapFactory.decodeResource(getResources(), R.drawable.post_img_test_1);
-        Bitmap img2 = BitmapFactory.decodeResource(getResources(), R.drawable.post_img_test_2);
-        Bitmap img3 = BitmapFactory.decodeResource(getResources(), R.drawable.post_img_test_3);
-        ArrayList<Bitmap> list = new ArrayList<>();
-        list.add(img1);
-        list.add(img2);
-        list.add(img3);
-        DataHelper.setImages(list);
     }
 }

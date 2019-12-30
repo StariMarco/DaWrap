@@ -46,7 +46,7 @@ public class UserProfileActivity extends AppCompatActivity
         _posts = new ArrayList<>();
         for(Post p : DataHelper.getPosts())
         {
-            if(p.UserId.equals(id))
+            if(p.userId.equals(id))
                 _posts.add(p);
         }
 
@@ -62,7 +62,7 @@ public class UserProfileActivity extends AppCompatActivity
             public void onImageClicked(int position)
             {
                 Intent i = new Intent(UserProfileActivity.this, PostCommentsActivity.class);
-                i.putExtra("POST_ID", _posts.get(position).PostId);
+                i.putExtra("POST_ID", _posts.get(position).postId);
                 startActivity(i);
             }
         });
@@ -70,7 +70,7 @@ public class UserProfileActivity extends AppCompatActivity
 
     private void userDataSetup()
     {
-        // Profile Image
+        // Profile image
         ((CircleImageView) findViewById(R.id.usr_profile_image)).setImageResource(_user.ProfileImage);
         // Username text
         ((TextView) findViewById(R.id.usr_username_txt)).setText(_user.Username);
@@ -78,7 +78,7 @@ public class UserProfileActivity extends AppCompatActivity
         String txtFollowerCount = _user.getFollowerCount() + " followers";
         _followersText = findViewById(R.id.usr_followers_txt);
         _followersText.setText(txtFollowerCount);
-        // Description text
+        // description text
         ((TextView) findViewById(R.id.usr_description_txt)).setText(_user.Description);
 
         // Follow button

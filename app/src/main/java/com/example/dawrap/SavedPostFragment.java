@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 import Adapters.ProfilePostsAdapter;
 import Models.Post;
-import Models.User;
 import Singletons.DataHelper;
 
 public class SavedPostFragment extends Fragment
@@ -64,7 +63,7 @@ public class SavedPostFragment extends Fragment
             public void onImageClicked(int position)
             {
                 Intent i = new Intent(getActivity(), PostCommentsActivity.class);
-                i.putExtra("POST_ID", posts.get(position).PostId);
+                i.putExtra("POST_ID", posts.get(position).postId);
                 startActivity(i);
             }
         });

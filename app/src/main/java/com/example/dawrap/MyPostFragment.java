@@ -45,7 +45,7 @@ public class MyPostFragment extends Fragment
         ArrayList<Post> userPosts = new ArrayList<>();
         for(Post p : DataHelper.getPosts())
         {
-            if(p.UserId == currentUser.UserId)
+            if(p.userId.equals(currentUser.UserId))
                 userPosts.add(p);
         }
 
@@ -59,7 +59,7 @@ public class MyPostFragment extends Fragment
             public void onImageClicked(int position)
             {
                 Intent i = new Intent(getActivity(), PostCommentsActivity.class);
-                i.putExtra("POST_ID", userPosts.get(position).PostId);
+                i.putExtra("POST_ID", userPosts.get(position).postId);
                 startActivity(i);
             }
         });

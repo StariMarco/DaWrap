@@ -1,8 +1,9 @@
 package Adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alexzh.circleimageview.CircleImageView;
 import com.alexzh.circleimageview.ItemSelectedListener;
+import com.bumptech.glide.Glide;
 import com.example.dawrap.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
@@ -113,6 +119,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         this.posts = posts;
     }
 
+    private static final String TAG = "PostAdapter";
+
     @NonNull
     @Override
     public PostAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -144,7 +152,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     {
         // Get the post and user to bind at this row
         Post post = DataHelper.getPosts().get(position);
-        User user = DataHelper.getUserById(post.UserId);
+        User user = DataHelper.getUserById(post.userId);
         User currentUser = DataHelper.getCurrentUser();
 
         if(user == null)
@@ -155,23 +163,23 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
         // Set all properties
         viewHolder.UsenameTextView.setText(user.Username);
-        viewHolder.TitleTextView.setText(post.Title);
+        viewHolder.TitleTextView.setText(post.title);
         viewHolder.ProfileImageView.setImageResource(user.ProfileImage);
 
-        if(post.Image == null)
+        if(post.image == null)
             viewHolder.PostImageView.setVisibility(View.GONE);
         else
         {
             viewHolder.PostImageView.setVisibility(View.VISIBLE);
-            viewHolder.PostImageView.setImageBitmap(post.Image);
+            DataHelper.downloadImageIntoView(viewHolder.PostImageView, post.image, TAG, R.drawable.post_img_test_3);
         }
 
-        if(post.Description == null || post.Description.isEmpty())
+        if(post.description == null || post.description.isEmpty())
             viewHolder.DescriptionTextView.setVisibility(View.GONE);
         else
         {
             viewHolder.DescriptionTextView.setVisibility(View.VISIBLE);
-            viewHolder.DescriptionTextView.setText(post.Description);
+            viewHolder.DescriptionTextView.setText(post.description);
         }
 
         if(post.hasUserLikedThisPost(currentUser.UserId))
@@ -179,10 +187,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         else
             viewHolder.LikeBtn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
 
-        viewHolder.LikesTextView.setText(String.valueOf(post.getLikesCount()));
-        viewHolder.CommentsTextView.setText(String.valueOf(post.CommentCount));
+        viewHolder.LikesTextView.setText(String.valueOf(post.getLikes().size()));
+        viewHolder.CommentsTextView.setText(String.valueOf(post.getComments().size()));
 
-        if(currentUser.hasSavedThisPost(post.PostId))
+        if(currentUser.hasSavedThisPost(post.postId))
             viewHolder.SavePostBtn.setImageResource(R.drawable.ic_bookmark_black_24dp);
         else
             viewHolder.SavePostBtn.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
