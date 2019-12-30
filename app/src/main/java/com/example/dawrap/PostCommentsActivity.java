@@ -52,7 +52,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_comments);
 
-        int id = getIntent().getIntExtra("POST_ID", 0);
+        String id = getIntent().getStringExtra("POST_ID");
         _post = DataHelper.getPostById(id);
 
         // Setup the post card content
@@ -310,7 +310,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         }
     }
 
-    private void openUserProfile(Integer userId)
+    private void openUserProfile(String userId)
     {
         Intent i = new Intent(PostCommentsActivity.this, UserProfileActivity.class);
         i.putExtra("USER_ID", userId);
@@ -323,7 +323,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         if(text.isEmpty())
             return;
         // Create new comment
-        Comment newComment = new Comment(13, DataHelper.getCurrentUser().UserId, text);
+        Comment newComment = new Comment("13", DataHelper.getCurrentUser().UserId, text);
         // Add the comment to the post list
         _post.addComment(newComment);
         // Notify changes to the comment list view

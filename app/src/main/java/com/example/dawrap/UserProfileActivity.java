@@ -41,12 +41,12 @@ public class UserProfileActivity extends AppCompatActivity
     private void postListViewSetup()
     {
         // Get the user reference and his posts
-        int id = getIntent().getIntExtra("USER_ID", 0);
+        String id = getIntent().getStringExtra("USER_ID");
         _user = DataHelper.getUserById(id);
         _posts = new ArrayList<>();
         for(Post p : DataHelper.getPosts())
         {
-            if(p.UserId == id)
+            if(p.UserId.equals(id))
                 _posts.add(p);
         }
 

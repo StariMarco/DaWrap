@@ -127,7 +127,7 @@ public class CreateImagePost extends AppCompatActivity
     public void onImagePostClick(View view)
     {
         // Create the post
-        Post newPost = new Post(16, DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), null, _imageBitmap, new ArrayList<>());
+        Post newPost = new Post("16", DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), null, _imageBitmap, new ArrayList<>());
         DataHelper.getPosts().add(0, newPost);
         super.onBackPressed();
     }

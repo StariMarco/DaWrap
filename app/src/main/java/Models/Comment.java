@@ -6,13 +6,13 @@ import java.util.Date;
 
 public class Comment implements Serializable
 {
-    public int CommentId;
-    public int UserId;
+    public String CommentId;
+    public String UserId;
     public String Text;
     public Date Date;
-    public ArrayList<Integer> Likes;
+    public ArrayList<String> Likes;
 
-    public Comment(int commentId, int userId, String text)
+    public Comment(String commentId, String userId, String text)
     {
         this.CommentId = commentId;
         this.UserId = userId;
@@ -21,9 +21,9 @@ public class Comment implements Serializable
         this.Likes = new ArrayList<>();
     }
 
-    public boolean hasUserLikedThisComment(Integer userId)
+    public boolean hasUserLikedThisComment(String userId)
     {
-        for(Integer like : Likes)
+        for(String like : Likes)
         {
             if(like.equals(userId))
                 return true;
@@ -33,12 +33,12 @@ public class Comment implements Serializable
 
     public int getLikesCount(){return Likes.size();}
 
-    public void addLike(Integer userId)
+    public void addLike(String userId)
     {
         Likes.add(userId);
     }
 
-    public void removeLike(Integer userId)
+    public void removeLike(String userId)
     {
         Likes.remove(userId);
     }

@@ -8,16 +8,16 @@ import java.util.ArrayList;
 
 public class Post implements Serializable
 {
-    public int PostId;
-    public int UserId;
+    public String PostId;
+    public String UserId;
     public String Title;
     public String Description;
     public Bitmap Image;
-    public ArrayList<Integer> Likes;
+    public ArrayList<String> Likes;
     public Integer CommentCount = 0;
     public ArrayList<Comment> Comments;
 
-    public Post(int postId, int userId, String title, String description, Bitmap postImage, ArrayList<Comment> comments)
+    public Post(String postId, String userId, String title, String description, Bitmap postImage, ArrayList<Comment> comments)
     {
         this.PostId = postId;
         this.UserId = userId;
@@ -28,14 +28,14 @@ public class Post implements Serializable
         this.Comments = comments;
     }
 
-    public void addLike(Integer userId)
+    public void addLike(String userId)
     {
         Likes.add(userId);
 
         Log.d("Post", Likes.toString());
     }
 
-    public void removeLike(Integer userId)
+    public void removeLike(String userId)
     {
         Likes.remove(userId);
         Log.d("Post", Likes.toString());
@@ -45,9 +45,9 @@ public class Post implements Serializable
 
     public ArrayList<Comment> getComments(){return Comments;}
 
-    public boolean hasUserLikedThisPost(Integer userId)
+    public boolean hasUserLikedThisPost(String userId)
     {
-        for(Integer like : Likes)
+        for(String like : Likes)
         {
             if(like.equals(userId))
                 return true;

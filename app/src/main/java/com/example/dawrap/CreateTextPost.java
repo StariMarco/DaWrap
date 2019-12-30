@@ -99,7 +99,7 @@ public class CreateTextPost extends AppCompatActivity
     public void onTextPostClick(View view)
     {
         // Create the post
-        Post newPost = new Post(15, DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), _descriptionTxt.getText().toString(), null, new ArrayList<>());
+        Post newPost = new Post("15", DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), _descriptionTxt.getText().toString(), null, new ArrayList<>());
         DataHelper.getPosts().add(0, newPost);
 
         super.onBackPressed();

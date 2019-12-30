@@ -5,15 +5,15 @@ import java.util.ArrayList;
 
 public class User implements Serializable
 {
-    public Integer UserId;
+    public String UserId;
     public String Username;
     public int ProfileImage;
     public String Description;
-    public ArrayList<Integer> Follows;
-    public ArrayList<Integer> Followers;
+    public ArrayList<String> Follows;
+    public ArrayList<String> Followers;
     public ArrayList<Post> SavedPosts;
 
-    public User(int userId, String username, int profileImage, String description)
+    public User(String userId, String username, int profileImage, String description)
     {
         this.UserId = userId;
         this.Username = username;
@@ -25,7 +25,7 @@ public class User implements Serializable
         Follows = new ArrayList<>();
     }
 
-    public boolean hasSavedThisPost(Integer postId)
+    public boolean hasSavedThisPost(String postId)
     {
         for(Post p : SavedPosts)
         {
@@ -52,9 +52,9 @@ public class User implements Serializable
 
     public int getFollowerCount(){return Followers.size(); }
 
-    public boolean followsUserWithId(Integer userId)
+    public boolean followsUserWithId(String userId)
     {
-        for (Integer id : Follows)
+        for (String id : Follows)
         {
             if(userId.equals(id))
                 return true;
