@@ -15,6 +15,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import Models.Post;
 import Singletons.DataHelper;
@@ -98,7 +100,8 @@ public class CreateTextPost extends AppCompatActivity
     {
         // Create the post
         Post newPost = new Post(15, DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), _descriptionTxt.getText().toString(), null, new ArrayList<>());
-        DataHelper.getPosts().add(newPost);
+        DataHelper.getPosts().add(0, newPost);
+
         super.onBackPressed();
     }
 }

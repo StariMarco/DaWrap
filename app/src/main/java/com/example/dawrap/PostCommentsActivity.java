@@ -73,7 +73,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         User user = DataHelper.getUserById(_post.UserId);
         // Setup the post card content
         if(_post.Image != null)
-            ((ImageView)findViewById(R.id.image_post)).setImageResource(_post.Image);
+            ((ImageView)findViewById(R.id.image_post)).setImageBitmap(_post.Image);
 
         // Title
         ((TextView)findViewById(R.id.label_title)).setText(_post.Title);

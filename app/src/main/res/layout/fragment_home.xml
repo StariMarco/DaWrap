@@ -9,11 +9,28 @@
     android:id="@+id/post_list_background"
     android:paddingBottom="20dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/post_list_view"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="5dp"
-            android:clipToPadding="true"/>
+            android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/top_nav"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="Home"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="@dimen/fontSizeTitle"
+                    android:fontFamily="@font/roboto_medium"
+                    android:layout_alignParentTop="true"
+                    android:textAlignment="center"
+                    android:gravity="center"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/post_list_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="5dp"
+                    android:layout_below="@+id/top_nav"
+                    android:clipToPadding="true"/>
+        </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

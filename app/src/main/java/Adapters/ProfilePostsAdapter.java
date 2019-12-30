@@ -90,7 +90,7 @@ public class ProfilePostsAdapter extends RecyclerView.Adapter<ProfilePostsAdapte
         // Set all properties
         if(post.Image != null)
         {
-            viewHolder.Image.setImageResource(post.Image);
+            viewHolder.Image.setImageBitmap(post.Image);
             viewHolder.DescriptionTxt.setVisibility(View.GONE);
         }
         else

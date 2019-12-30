@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1040593142001",
+    "firebase_url": "https://dawrap-11242.firebaseio.com",
+    "project_id": "dawrap-11242",
+    "storage_bucket": "dawrap-11242.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1040593142001:android:69dcf39d7731e89c986950",
+        "android_client_info": {
+          "package_name": "com.example.dawrap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1040593142001-l4r0knasbqikpc8nb6n2vntjbalfaad8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dawrap",
+            "certificate_hash": "d9ece622ae11b83cc1a53f1dd8161edcf67a46f4"
+          }
+        },
+        {
+          "client_id": "1040593142001-a5io6f147su6v7bs7t0u5u6vqqq1793h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAld3HPVoBYgL9Q_teYsoBE3QZ-kT_fSpY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1040593142001-a5io6f147su6v7bs7t0u5u6vqqq1793h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

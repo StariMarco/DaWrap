@@ -1,5 +1,6 @@
 package Models;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.io.Serializable;
@@ -11,12 +12,12 @@ public class Post implements Serializable
     public int UserId;
     public String Title;
     public String Description;
-    public Integer Image;
+    public Bitmap Image;
     public ArrayList<Integer> Likes;
     public Integer CommentCount = 0;
     public ArrayList<Comment> Comments;
 
-    public Post(int postId, int userId, String title, String description, Integer postImage, ArrayList<Comment> comments)
+    public Post(int postId, int userId, String title, String description, Bitmap postImage, ArrayList<Comment> comments)
     {
         this.PostId = postId;
         this.UserId = userId;

@@ -102,6 +102,7 @@ public class CreateImagePost extends AppCompatActivity
                 InputStream imageStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
                 _imageBitmap = BitmapFactory.decodeStream(imageStream);
                 _imageView.setImageBitmap(_imageBitmap);
+                findViewById(R.id.change_image_btn).setVisibility(View.VISIBLE);
             } catch (FileNotFoundException e)
             {
                 e.printStackTrace();
@@ -126,9 +127,13 @@ public class CreateImagePost extends AppCompatActivity
     public void onImagePostClick(View view)
     {
         // Create the post
-        // TODO: change resourse image to bitmap
-        Post newPost = new Post(15, DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), null, R.drawable.post_img_test_1, new ArrayList<>());
-        DataHelper.getPosts().add(newPost);
+        Post newPost = new Post(16, DataHelper.getCurrentUser().UserId, _titleTxt.getText().toString(), null, _imageBitmap, new ArrayList<>());
+        DataHelper.getPosts().add(0, newPost);
         super.onBackPressed();
+    }
+
+    public void onChangeImageClick(View view)
+    {
+        pickImage();
     }
 }

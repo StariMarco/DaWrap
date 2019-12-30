@@ -20,10 +20,13 @@
             android:textColor="@color/colorTextPrimary"
             android:textSize="@dimen/fontSizeTitle"
             android:fontFamily="@font/roboto_bold"
-            android:layout_centerInParent="true"
+            android:layout_toRightOf="@id/image_back_btn"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
             android:background="@null"/>
 
         <ImageButton
+            android:id="@+id/image_back_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/ic_arrow_back_black_24dp"
@@ -38,7 +41,7 @@
             android:text="Post"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:fontFamily="@font/roboto_bold"
+            android:fontFamily="@font/roboto_medium"
             android:layout_marginRight="5dp"
             android:enabled="false"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"

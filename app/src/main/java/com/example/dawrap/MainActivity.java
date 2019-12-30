@@ -6,6 +6,8 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
 
 import Singletons.DataHelper;
 import Models.NavigationIconClickListener;
@@ -43,6 +47,7 @@ public class MainActivity extends AppCompatActivity
         // Init singletons
         DataHelper.initInstance();
         SystemHelper.initInstance();
+        setTestImages();
     }
 
     private void setupBottomNavigation(Bundle savedInstanceState)
@@ -176,5 +181,17 @@ public class MainActivity extends AppCompatActivity
     public void onImagePostClick(View view)
     {
         startActivity(new Intent(MainActivity.this, CreateImagePost.class));
+    }
+
+    private void setTestImages()
+    {
+        Bitmap img1 = BitmapFactory.decodeResource(getResources(), R.drawable.post_img_test_1);
+        Bitmap img2 = BitmapFactory.decodeResource(getResources(), R.drawable.post_img_test_2);
+        Bitmap img3 = BitmapFactory.decodeResource(getResources(), R.drawable.post_img_test_3);
+        ArrayList<Bitmap> list = new ArrayList<>();
+        list.add(img1);
+        list.add(img2);
+        list.add(img3);
+        DataHelper.setImages(list);
     }
 }

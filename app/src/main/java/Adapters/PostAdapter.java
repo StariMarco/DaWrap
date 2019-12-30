@@ -163,7 +163,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         else
         {
             viewHolder.PostImageView.setVisibility(View.VISIBLE);
-            viewHolder.PostImageView.setImageResource(post.Image);
+            viewHolder.PostImageView.setImageBitmap(post.Image);
         }
 
         if(post.Description == null || post.Description.isEmpty())
