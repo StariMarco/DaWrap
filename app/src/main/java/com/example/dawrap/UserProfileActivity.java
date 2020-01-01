@@ -71,24 +71,24 @@ public class UserProfileActivity extends AppCompatActivity
     private void userDataSetup()
     {
         // Profile image
-        ((CircleImageView) findViewById(R.id.usr_profile_image)).setImageResource(_user.ProfileImage);
-        // Username text
-        ((TextView) findViewById(R.id.usr_username_txt)).setText(_user.Username);
-        // Followers text
-        String txtFollowerCount = _user.getFollowerCount() + " followers";
+        ((CircleImageView) findViewById(R.id.usr_profile_image)).setImageResource(_user.profileImage);
+        // username text
+        ((TextView) findViewById(R.id.usr_username_txt)).setText(_user.username);
+        // followers text
+        String txtFollowerCount = _user.followersCount() + " followers";
         _followersText = findViewById(R.id.usr_followers_txt);
         _followersText.setText(txtFollowerCount);
         // description text
-        ((TextView) findViewById(R.id.usr_description_txt)).setText(_user.Description);
+        ((TextView) findViewById(R.id.usr_description_txt)).setText(_user.description);
 
         // Follow button
         MaterialButton followerBtn = findViewById(R.id.follow_btn);
-        if(DataHelper.getCurrentUser().UserId.equals(_user.UserId))
+        if(DataHelper.getCurrentUser().userId.equals(_user.userId))
         {
             followerBtn.setEnabled(false);
             followerBtn.setText("Your Profile");
         }
-        else if(DataHelper.getCurrentUser().followsUserWithId(_user.UserId))
+        else if(DataHelper.getCurrentUser().followsUserWithId(_user.userId))
         {
             followerBtn.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
             followerBtn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
@@ -105,7 +105,7 @@ public class UserProfileActivity extends AppCompatActivity
     {
         MaterialButton btn = (MaterialButton) view;
         User currentUser = DataHelper.getCurrentUser();
-        if(currentUser.followsUserWithId(_user.UserId))
+        if(currentUser.followsUserWithId(_user.userId))
         {
             // Unfollow
             btn.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
@@ -122,7 +122,7 @@ public class UserProfileActivity extends AppCompatActivity
             currentUser.follow(_user);
         }
 
-        String txtFollowerCount = _user.getFollowerCount() + " followers";
+        String txtFollowerCount = _user.followersCount() + " followers";
         _followersText.setText(txtFollowerCount);
     }
 }

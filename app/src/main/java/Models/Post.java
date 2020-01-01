@@ -7,26 +7,16 @@ import java.util.ArrayList;
 
 public class Post implements Serializable
 {
-    public ArrayList<Comment> comments;
+    public String postId;
+    public String userId;
+    public String title;
     public String description;
     public String image;
     public ArrayList<String> likes;
-    public String postId;
-    public String title;
-    public String userId;
+    public ArrayList<Comment> comments;
+    public String creationDate;
 
     public Post(){}
-
-    public Post(String postId, String userId, String title, String description, String postImage, ArrayList<String> likes, ArrayList<Comment> comments)
-    {
-        this.postId = postId;
-        this.userId = userId;
-        this.title = title;
-        this.description = description;
-        this.image = postImage;
-        this.likes = likes;
-        this.comments = comments;
-    }
 
     // Getters
     public ArrayList<String> getLikes(){return likes;}
@@ -43,9 +33,9 @@ public class Post implements Serializable
 
     public String getUserId() {return userId;}
 
-//    public int getLikesCount(){return likes.size();}
-//
-//    public int getCommentsCount(){return comments.size();}
+    public int likesCount(){return likes.size();}
+
+    public int commentsCount(){return comments.size();}
 
     public void addLike(String userId)
     {

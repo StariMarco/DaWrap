@@ -6,10 +6,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -25,13 +22,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
-
-import Models.Post;
-import Singletons.DataHelper;
 import Models.NavigationIconClickListener;
+import Models.User;
+import Singletons.DataHelper;
 import Singletons.SystemHelper;
 
 public class MainActivity extends AppCompatActivity
@@ -47,9 +42,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Init singletons
-        DataHelper.initInstance();
-        SystemHelper.initInstance();
+        User currentUser = getIntent().getParcelableExtra("CURRENT_USER");
 
         setupBottomNavigation(savedInstanceState);
     }

@@ -35,6 +35,16 @@
             android:layout_height="40dp"
             android:src="@drawable/profile_img_test"
             android:layout_centerInParent="true"/>
+        <ImageButton
+            android:id="@+id/comment_menu"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_more_vert_black_24dp"
+            android:background="@null"
+            android:visibility="gone"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
     <androidx.cardview.widget.CardView

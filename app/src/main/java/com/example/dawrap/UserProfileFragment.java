@@ -56,16 +56,16 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     {
         User currentUser = DataHelper.getCurrentUser();
 
-        // Username text
-        ((TextView)view.findViewById(R.id.usr_lbl_username)).setText(currentUser.Username);
+        // username text
+        ((TextView)view.findViewById(R.id.usr_lbl_username)).setText(currentUser.username);
 
-        // Followers text
-        String followersTxt = currentUser.getFollowerCount() + " followers";
+        // followers text
+        String followersTxt = currentUser.followersCount() + " followers";
         ((TextView)view.findViewById(R.id.usr_lbl_followers)).setText(followersTxt);
 
         // Profile image
         CircleImageView profileImage = view.findViewById(R.id.usr_profile_image);
-        profileImage.setImageResource(currentUser.ProfileImage);
+        profileImage.setImageResource(currentUser.profileImage);
         profileImage.setOnItemSelectedClickListener(new ItemSelectedListener()
         {
             @Override
@@ -156,9 +156,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
     private void swapViewAnimation(Fragment nextFragment, View prevUnderline, View nextUnderline)
     {
-        // RECYCLERVIEW ANIMATION
         AnimatorSet animatorSet = new AnimatorSet();
 
+        // RECYCLERVIEW ANIMATION
         ObjectAnimator transitionDown = ObjectAnimator.ofFloat(_fragmentContainer, View.TRANSLATION_Y, _containerHeight + 150);
         transitionDown.setDuration(300);
         transitionDown.setInterpolator(new AccelerateDecelerateInterpolator());

@@ -45,7 +45,7 @@ public class MyPostFragment extends Fragment
         ArrayList<Post> userPosts = new ArrayList<>();
         for(Post p : DataHelper.getPosts())
         {
-            if(p.userId.equals(currentUser.UserId))
+            if(p.userId.equals(currentUser.userId))
                 userPosts.add(p);
         }
 

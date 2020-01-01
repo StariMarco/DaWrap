@@ -1,31 +1,37 @@
 package Models;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class Comment implements Serializable
 {
-    public String CommentId;
-    public String UserId;
-    public String Text;
-    public Date Date;
-    public ArrayList<String> Likes;
+    public String commentId;
+    public String userId;
+    public String text;
+    public ArrayList<String> likes;
+    public String creationDate;
 
     public Comment(){}
 
     public Comment(String commentId, String userId, String text)
     {
-        this.CommentId = commentId;
-        this.UserId = userId;
-        this.Text = text;
-        this.Date = new Date();
-        this.Likes = new ArrayList<>();
+        this.commentId = commentId;
+        this.userId = userId;
+        this.text = text;
+        this.likes = new ArrayList<>();
+
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss", Locale.ENGLISH);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        this.creationDate = df.format(new Date());
     }
 
     public boolean hasUserLikedThisComment(String userId)
     {
-        for(String like : Likes)
+        for(String like : likes)
         {
             if(like.equals(userId))
                 return true;
@@ -33,15 +39,15 @@ public class Comment implements Serializable
         return false;
     }
 
-    public int getLikesCount(){return Likes.size();}
+    public int likesCount(){return likes.size();}
 
     public void addLike(String userId)
     {
-        Likes.add(userId);
+        likes.add(userId);
     }
 
     public void removeLike(String userId)
     {
-        Likes.remove(userId);
+        likes.remove(userId);
     }
 }

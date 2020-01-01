@@ -16,9 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
-import java.util.ArrayList;
 
 import Adapters.PostAdapter;
 import Models.Post;
@@ -52,14 +51,17 @@ public class HomeFragment extends Fragment
             return;
         }
         DataHelper.db.collection("posts")
+                .orderBy("creationDate", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful())
                     {
                         for (QueryDocumentSnapshot document : task.getResult())
                         {
+//                            Post p = new Post();
+//                            Map<String, Object> map = document.getData();
+//                            Log.d(TAG, "post => " + map);
                             DataHelper._posts.add(document.toObject(Post.class));
-                            Log.d(TAG, document.getId() + " => " + document.toObject(Post.class));
                             postListViewSetup(view);
                         }
                     }
@@ -108,24 +110,24 @@ public class HomeFragment extends Fragment
                 }
                 try
                 {
-                    if(post.hasUserLikedThisPost(currentUser.UserId))
+                    if(post.hasUserLikedThisPost(currentUser.userId))
                     {
                         // remove like
                         btn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                        post.removeLike(currentUser.UserId);
+                        post.removeLike(currentUser.userId);
 
                     }
                     else
                     {
                         // like
                         btn.setImageResource(R.drawable.ic_favorite_black_24dp);
-                        post.addLike(currentUser.UserId);
+                        post.addLike(currentUser.userId);
                     }
                 }catch (Exception e)
                 {
                     Log.e("HomeFragment", "Error in onLikeClick");
                 }
-                likeTxt.setText(String.valueOf(post.getLikes().size()));
+                likeTxt.setText(String.valueOf(post.likesCount()));
             }
 
             @Override
@@ -163,7 +165,7 @@ public class HomeFragment extends Fragment
                 User user = DataHelper.getUserById(post.userId);
 
                 Intent i = new Intent(getActivity(), UserProfileActivity.class);
-                i.putExtra("USER_ID", user.UserId);
+                i.putExtra("USER_ID", user.userId);
                 startActivity(i);
             }
         });

@@ -2,14 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/usr_edit_profile"
+        android:id="@+id/btn_delete_comment"
         android:icon="@drawable/ic_settings_white_24dp"
-        android:title="Edit Profile"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/usr_logout"
-        android:icon="@drawable/ic_settings_white_24dp"
-        android:title="Logout"
+        android:title="Delete Comment"
         app:showAsAction="never"/>
 </menu>

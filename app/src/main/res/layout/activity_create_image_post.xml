@@ -58,6 +58,8 @@
         app:counterEnabled="true"
         app:counterMaxLength="200"
         app:counterOverflowTextColor="@color/red"
+        app:endIconDrawable="@drawable/ic_cancel_black_24dp"
+        app:endIconMode="clear_text"
         android:layout_below="@id/image_title_layout"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"

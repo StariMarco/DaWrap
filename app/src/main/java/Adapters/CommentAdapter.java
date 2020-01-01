@@ -119,7 +119,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         // Get the comment to bind at this row
         Comment comment = comments.get(position);
         // Get the user who created this comment
-        User user = DataHelper.getUserById(comment.UserId);
+        User user = DataHelper.getUserById(comment.userId);
 
         User currentUser = DataHelper.getCurrentUser();
         if(user == null)
@@ -129,14 +129,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         }
 
         // Set all properties
-        String likes = comment.getLikesCount() + " \"like\"";
+        String likes = comment.likesCount() + " \"like\"";
 
-        holder.ProfileImage.setImageResource(user.ProfileImage);
+        holder.ProfileImage.setImageResource(user.profileImage);
         holder.LikesTextView.setText(likes);
-        holder.TextTextView.setText(comment.Text);
-        holder.UsernameTextView.setText(user.Username);
+        holder.TextTextView.setText(comment.text);
+        holder.UsernameTextView.setText(user.username);
 
-        if(comment.hasUserLikedThisComment(currentUser.UserId))
+        if(comment.hasUserLikedThisComment(currentUser.userId))
             holder.LikeButton.setImageResource(R.drawable.ic_favorite_white_24dp);
 
         holder.ProfileImage.setOnItemSelectedClickListener(new ItemSelectedListener()
@@ -154,7 +154,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             }
         });
 
-        if(currentUser.UserId.equals(comment.UserId))
+        if(currentUser.userId.equals(comment.userId))
             holder.DeleteBtn.setVisibility(View.VISIBLE);
     }
 

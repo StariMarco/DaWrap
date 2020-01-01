@@ -2,14 +2,15 @@ package com.example.dawrap;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,8 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alexzh.circleimageview.CircleImageView;
 import com.alexzh.circleimageview.ItemSelectedListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import Adapters.CommentAdapter;
 import Models.Comment;
@@ -38,6 +42,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
     private View _commentList;
     private RecyclerView _commentsListView;
     private EditText _commentTxt;
+    private TextView _labelCommentCount;
     private CommentAdapter _commentAdapter;
     private float _dyPostCard, _dyComments, _bottomPos = -1, _contentHeight;
 
@@ -49,6 +54,9 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
 
         String id = getIntent().getStringExtra("POST_ID");
         _post = DataHelper.getPostById(id);
+
+        // Delete comment setup
+        dropdownMenuSetup();
 
         // Setup the post card content
         cardSetup();
@@ -74,15 +82,19 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             DataHelper.downloadImageIntoView(postImageView, _post.image, TAG, R.drawable.post_img_test_3);
         }
 
+        // Delete button
+        if(DataHelper.getCurrentUser().userId.equals(_post.userId))
+            findViewById(R.id.comment_menu).setVisibility(View.VISIBLE);
+
         // title
         ((TextView)findViewById(R.id.label_title)).setText(_post.title);
 
         // Profile image
         CircleImageView profileImgView = findViewById(R.id.image_profile);
-        profileImgView.setImageResource(user.ProfileImage);
+        profileImgView.setImageResource(user.profileImage);
         profileImgView.setOnClickListener(v -> {
             // Open user profile
-            openUserProfile(user.UserId);
+            openUserProfile(user.userId);
         });
         profileImgView.setOnItemSelectedClickListener(new ItemSelectedListener()
         {
@@ -100,8 +112,8 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         });
 
         // Add comment profile image
-        CircleImageView addCommentImgView = (CircleImageView) findViewById(R.id.add_comment_profile_image);
-        addCommentImgView.setImageResource(DataHelper.getCurrentUser().ProfileImage);
+        CircleImageView addCommentImgView = findViewById(R.id.add_comment_profile_image);
+        addCommentImgView.setImageResource(DataHelper.getCurrentUser().profileImage);
         addCommentImgView.setOnItemSelectedClickListener(new ItemSelectedListener()
         {
             @Override
@@ -122,14 +134,15 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             ((TextView)findViewById(R.id.label_description)).setText(_post.description);
 
         // likes
-        if(_post.hasUserLikedThisPost(DataHelper.getCurrentUser().UserId))
+        if(_post.hasUserLikedThisPost(DataHelper.getCurrentUser().userId))
             ((ImageButton)findViewById(R.id.like_button)).setImageResource(R.drawable.ic_favorite_black_24dp);
 
-        ((TextView)findViewById(R.id.label_likes)).setText(String.valueOf(_post.getLikes().size()));
+        ((TextView)findViewById(R.id.label_likes)).setText(String.valueOf(_post.likesCount()));
         // comments
-        ((TextView)findViewById(R.id.label_comments)).setText(String.valueOf(_post.getComments().size()));
+        _labelCommentCount = findViewById(R.id.label_comments);
+        _labelCommentCount.setText(String.valueOf(_post.commentsCount()));
 
-        // SavedPosts
+        // savedPosts
         if(DataHelper.getCurrentUser().hasSavedThisPost(_post.postId))
             ((ImageButton)findViewById(R.id.save_post_button)).setImageResource(R.drawable.ic_bookmark_black_24dp);
     }
@@ -183,25 +196,40 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
                     Log.e("PostCommentActivity", "The comment like button or his tag is null");
                     return;
                 }
-                if(comment.hasUserLikedThisComment(currentUser.UserId))
+                if(comment.hasUserLikedThisComment(currentUser.userId))
                 {
-                    // remove like
-                    btn.setImageResource(R.drawable.ic_favorite_border_white_24dp);
-                    comment.removeLike(currentUser.UserId);
+                    // Remove like
+                    comment.removeLike(currentUser.userId);
+                    // Update the comment like in firestore
+                    DocumentReference postRef = DataHelper.db.collection("posts").document(_post.postId);
+                    postRef.update("comments", _post.comments)
+                            .addOnSuccessListener(aVoid -> {
+                                btn.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                            }).addOnFailureListener(e -> {
+                                Log.e(TAG, "Error in removing the comment like", e);
+                            });
                 }else
                 {
-                    // like
-                    btn.setImageResource(R.drawable.ic_favorite_white_24dp);
-                    comment.addLike(currentUser.UserId);
+                    // Like
+                    comment.addLike(currentUser.userId);
+                    // Update the comment like in firestore
+                    DocumentReference postRef = DataHelper.db.collection("posts").document(_post.postId);
+                    postRef.update("comments", _post.comments)
+                            .addOnSuccessListener(aVoid -> {
+                                btn.setImageResource(R.drawable.ic_favorite_white_24dp);
+                            }).addOnFailureListener(e -> {
+                                Log.e(TAG, "Error in adding the comment like", e);
+                            });
+
                 }
-                String likes = postComments.get(position).getLikesCount() + " \"like\"";
+                String likes = postComments.get(position).likesCount() + " \"like\"";
                 likeTxt.setText(likes);
             }
 
             @Override
             public void onProfileImageClick(int position)
             {
-                openUserProfile(postComments.get(position).UserId);
+                openUserProfile(postComments.get(position).userId);
             }
 
             @Override
@@ -213,10 +241,19 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
                 builder.setTitle("Delete comment");
                 builder.setMessage("Do you want to delete this comment?");
                 builder.setPositiveButton("Confirm", (dialog, which) -> {
-                    _post.deleteComment(comment);
-                    // Notify changes to the comment list view
-                    _commentAdapter.notifyDataSetChanged();
-                    _commentsListView.setAdapter(_commentAdapter);
+                    // Update the item in firestore
+                    DocumentReference postRef = DataHelper.db.collection("posts").document(_post.postId);
+                    postRef.update("comments", FieldValue.arrayRemove(comment))
+                            .addOnSuccessListener(aVoid -> {
+                                _post.deleteComment(comment);
+                                _labelCommentCount.setText(String.valueOf(_post.commentsCount()));
+                                // Notify changes to the comment list view
+                                _commentAdapter.notifyDataSetChanged();
+                                _commentsListView.setAdapter(_commentAdapter);
+                            }).addOnFailureListener(e -> {
+                                Log.e(TAG, "Error in deleting the comment", e);
+                            });
+
                 });
 
                 builder.setNegativeButton("Cancel", (dialog, which) -> {
@@ -275,17 +312,17 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         TextView likeTxt = findViewById(R.id.label_likes);
         User currentUser = DataHelper.getCurrentUser();
 
-        if(_post.hasUserLikedThisPost(currentUser.UserId))
+        if(_post.hasUserLikedThisPost(currentUser.userId))
         {
             // remove like
             btn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-            _post.removeLike(currentUser.UserId);
+            _post.removeLike(currentUser.userId);
         }
         else
         {
             // like
             btn.setImageResource(R.drawable.ic_favorite_black_24dp);
-            _post.addLike(currentUser.UserId);
+            _post.addLike(currentUser.userId);
         }
         likeTxt.setText(String.valueOf(_post.getLikes().size()));
     }
@@ -322,15 +359,76 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         if(text.isEmpty())
             return;
         // Create new comment
-        Comment newComment = new Comment("13", DataHelper.getCurrentUser().UserId, text);
-        // Add the comment to the post list
-        _post.addComment(newComment);
-        // Notify changes to the comment list view
-        _commentAdapter.notifyDataSetChanged();
-        _commentsListView.setAdapter(_commentAdapter);
-        // Reset input text view
-        _commentTxt.setText("");
-        // Hide keyboard if opened
-        SystemHelper.hideSoftKeyboard(this);
+        String uniqueId = UUID.randomUUID().toString();
+        Comment newComment = new Comment(uniqueId, DataHelper.getCurrentUser().userId, text);
+
+        // Update the item in firestore
+        DocumentReference postRef = DataHelper.db.collection("posts").document(_post.postId);
+        postRef.update("comments", FieldValue.arrayUnion(newComment))
+                .addOnSuccessListener(aVoid -> {
+                    // Add the comment to the post list
+                    _post.comments.add(newComment);
+                    _labelCommentCount.setText(String.valueOf(_post.commentsCount()));
+                    // Notify changes to the comment list view
+                    _commentAdapter.notifyDataSetChanged();
+                    _commentsListView.setAdapter(_commentAdapter);
+                    // Reset input text view
+                    _commentTxt.setText("");
+                    // Hide keyboard if opened
+                    SystemHelper.hideSoftKeyboard(this);
+                }).addOnFailureListener(e -> {
+                    Log.e(TAG, "Error uploading comments: ", e);
+                });
+
+
+    }
+
+    private void dropdownMenuSetup()
+    {
+        // Menu setup
+        ImageButton menuBtn = findViewById(R.id.comment_menu);
+        PopupMenu dropDownMenu = new PopupMenu(getApplicationContext(), menuBtn);
+        Menu menu = dropDownMenu.getMenu();
+
+        // Set the dropdown menu items
+        dropDownMenu.getMenuInflater().inflate(R.menu.comment_page_menu, menu);
+
+        // Set the dropdown menu click listeners
+        dropDownMenu.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.btn_delete_comment)
+            {
+                onDeletePostClick();
+                return true;
+            }
+            return false;
+        });
+
+        // CLick listener to show the dropdown menu
+        menuBtn.setOnClickListener(v -> {
+            dropDownMenu.show();
+        });
+    }
+
+    public void onDeletePostClick()
+    {
+        // Delete post in firebase
+        AlertDialog.Builder builder = new AlertDialog.Builder(PostCommentsActivity.this);
+        builder.setTitle("Delete Post");
+        builder.setMessage("Do you want to delete this post?");
+        builder.setPositiveButton("Confirm", (dialog, which) -> {
+            DataHelper.db.collection("posts").document(_post.postId).delete()
+                    .addOnSuccessListener(aVoid -> {
+                        DataHelper._posts.remove(_post);
+                        super.onBackPressed();
+                    }).addOnFailureListener(e -> {
+                Log.e(TAG, "Error in deleting the post", e);
+            });
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

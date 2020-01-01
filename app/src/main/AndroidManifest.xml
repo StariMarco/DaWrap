@@ -11,7 +11,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".CreateImagePost"/>
+        <activity android:name=".UserAuthenticationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".CreateImagePost" />
         <activity
             android:name=".CreateTextPost"
             android:parentActivityName=".MainActivity" />
@@ -23,11 +30,7 @@
             android:parentActivityName=".PostActivity" />
         <activity android:name=".BackdropContentActivity" />
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".PostActivity" />
     </application>

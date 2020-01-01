@@ -1,8 +1,6 @@
 package Adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alexzh.circleimageview.CircleImageView;
 import com.alexzh.circleimageview.ItemSelectedListener;
-import com.bumptech.glide.Glide;
 import com.example.dawrap.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
@@ -162,9 +155,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         }
 
         // Set all properties
-        viewHolder.UsenameTextView.setText(user.Username);
+        viewHolder.UsenameTextView.setText(user.username);
         viewHolder.TitleTextView.setText(post.title);
-        viewHolder.ProfileImageView.setImageResource(user.ProfileImage);
+        viewHolder.ProfileImageView.setImageResource(user.profileImage);
 
         if(post.image == null)
             viewHolder.PostImageView.setVisibility(View.GONE);
@@ -182,13 +175,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
             viewHolder.DescriptionTextView.setText(post.description);
         }
 
-        if(post.hasUserLikedThisPost(currentUser.UserId))
+        if(post.hasUserLikedThisPost(currentUser.userId))
             viewHolder.LikeBtn.setImageResource(R.drawable.ic_favorite_black_24dp);
         else
             viewHolder.LikeBtn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
 
-        viewHolder.LikesTextView.setText(String.valueOf(post.getLikes().size()));
-        viewHolder.CommentsTextView.setText(String.valueOf(post.getComments().size()));
+        viewHolder.LikesTextView.setText(String.valueOf(post.likesCount()));
+        viewHolder.CommentsTextView.setText(String.valueOf(post.commentsCount()));
 
         if(currentUser.hasSavedThisPost(post.postId))
             viewHolder.SavePostBtn.setImageResource(R.drawable.ic_bookmark_black_24dp);

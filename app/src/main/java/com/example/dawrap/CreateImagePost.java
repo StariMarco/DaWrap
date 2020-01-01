@@ -1,6 +1,5 @@
 package com.example.dawrap;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,7 +18,6 @@ import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -27,9 +25,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import Models.Comment;
@@ -145,8 +145,6 @@ public class CreateImagePost extends AppCompatActivity
     {
         // Create the post
         _uniqueId = UUID.randomUUID().toString();
-//        Post newPost = new Post(_uniqueId, DataHelper.getCurrentUser().userId, _titleTxt.getText().toString(), null, "", new ArrayList<>(), new ArrayList<>());
-//        DataHelper.getPosts().add(0, newPost);
 
         // Firebase Storage
         uploadImageToFirestore();
@@ -188,16 +186,21 @@ public class CreateImagePost extends AppCompatActivity
 
     private void uploadPostToFirstore(String uniqueId, String path)
     {
-        Map<String, Object> post = new HashMap<>();
-        post.put("postId", uniqueId);
-        post.put("userId", DataHelper.getCurrentUser().UserId);
-        post.put("title", _titleTxt.getText().toString());
-        post.put("description", null);
-        post.put("image", path);
-        post.put("likes", new ArrayList<String>());
-        post.put("comments", new ArrayList<Comment>());
+        Post newPost = new Post();
+        newPost.postId = uniqueId;
+        newPost.userId = DataHelper.getCurrentUser().userId;
+        newPost.title = _titleTxt.getText().toString();
+        newPost.description = null;
+        newPost.image = path;
+        newPost.likes = new ArrayList<String>();
+        newPost.comments = new ArrayList<Comment>();
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss", Locale.ENGLISH);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        newPost.creationDate = df.format(new Date());
 
-        DataHelper.db.collection("posts").document(uniqueId).set(post)
+        DataHelper._posts.add(0, newPost);
+
+        DataHelper.db.collection("posts").document(uniqueId).set(newPost)
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Post document added: " + uniqueId);
                     _loadingCard.setVisibility(View.GONE);

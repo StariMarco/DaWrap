@@ -84,7 +84,7 @@
                     android:layout_width="320dp"
                     android:layout_height="60dp"
                     android:text="Follow"
-                    app:cornerRadius="0dp"
+                    app:cornerRadius="6dp"
                     app:strokeColor="@color/white"
                     android:onClick="onFollowClick"/>
             </LinearLayout>

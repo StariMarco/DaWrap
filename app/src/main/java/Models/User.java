@@ -5,29 +5,31 @@ import java.util.ArrayList;
 
 public class User implements Serializable
 {
-    public String UserId;
-    public String Username;
-    public int ProfileImage;
-    public String Description;
-    public ArrayList<String> Follows;
-    public ArrayList<String> Followers;
-    public ArrayList<Post> SavedPosts;
+    public String userId;
+    public String username;
+    public int profileImage;
+    public String description;
+    public ArrayList<String> follows;
+    public ArrayList<String> followers;
+    public ArrayList<Post> savedPosts;
+
+    public User(){}
 
     public User(String userId, String username, int profileImage, String description)
     {
-        this.UserId = userId;
-        this.Username = username;
-        this.ProfileImage = profileImage;
-        this.Description = description;
+        this.userId = userId;
+        this.username = username;
+        this.profileImage = profileImage;
+        this.description = description;
 
-        SavedPosts =  new ArrayList<>();
-        Followers = new ArrayList<>();
-        Follows = new ArrayList<>();
+        savedPosts =  new ArrayList<>();
+        followers = new ArrayList<>();
+        follows = new ArrayList<>();
     }
 
     public boolean hasSavedThisPost(String postId)
     {
-        for(Post p : SavedPosts)
+        for(Post p : savedPosts)
         {
             if(postId.equals(p.postId))
                 return true;
@@ -37,24 +39,19 @@ public class User implements Serializable
 
     public void savePost(Post post)
     {
-        SavedPosts.add(post);
+        savedPosts.add(post);
     }
 
     public void removePost(Post post)
     {
-        SavedPosts.remove(post);
+        savedPosts.remove(post);
     }
 
-    public ArrayList<Post> getSavedPosts()
-    {
-        return SavedPosts;
-    }
-
-    public int getFollowerCount(){return Followers.size(); }
+    public int followersCount(){return followers.size(); }
 
     public boolean followsUserWithId(String userId)
     {
-        for (String id : Follows)
+        for (String id : follows)
         {
             if(userId.equals(id))
                 return true;
@@ -64,13 +61,49 @@ public class User implements Serializable
 
     public void follow(User user)
     {
-        Follows.add(user.UserId);
-        user.Followers.add(UserId);
+        follows.add(user.userId);
+        user.followers.add(userId);
     }
 
     public void unfollow(User user)
     {
-        Follows.remove(user.UserId);
-        user.Followers.remove(UserId);
+        follows.remove(user.userId);
+        user.followers.remove(userId);
+    }
+
+    // GET
+    public ArrayList<Post> getSavedPosts()
+    {
+        return savedPosts;
+    }
+
+    public String getUserId()
+    {
+        return userId;
+    }
+
+    public String getUsername()
+    {
+        return username;
+    }
+
+    public int getProfileImage()
+    {
+        return profileImage;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public ArrayList<String> getFollows()
+    {
+        return follows;
+    }
+
+    public ArrayList<String> getFollowers()
+    {
+        return followers;
     }
 }

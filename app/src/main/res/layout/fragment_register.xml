@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="10dp"
+    android:clipToPadding="false"
+    android:background="@drawable/post_backgroung_shape"
+    android:backgroundTint="@color/white">
+
+    <LinearLayout
+        android:id="@+id/register_container"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/username_entry_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            app:hintTextColor="@color/colorTextSecondary"
+            app:boxCornerRadiusTopEnd="5dp"
+            app:boxCornerRadiusTopStart="5dp"
+            app:boxCornerRadiusBottomEnd="5dp"
+            app:boxCornerRadiusBottomStart="5dp"
+            app:endIconDrawable="@drawable/ic_cancel_black_24dp"
+            app:endIconMode="clear_text"
+            app:boxBackgroundColor="@color/white"
+            android:layout_marginBottom="10dp"
+            android:elevation="10dp"
+            android:visibility="visible"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_username_register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/email_entry_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            app:hintTextColor="@color/colorTextSecondary"
+            app:boxCornerRadiusTopEnd="5dp"
+            app:boxCornerRadiusTopStart="5dp"
+            app:boxCornerRadiusBottomEnd="5dp"
+            app:boxCornerRadiusBottomStart="5dp"
+            app:endIconDrawable="@drawable/ic_cancel_black_24dp"
+            app:endIconMode="clear_text"
+            app:boxBackgroundColor="@color/white"
+            android:layout_marginBottom="10dp"
+            android:visibility="visible"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_email_register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_entry_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            app:hintTextColor="@color/colorTextSecondary"
+            app:boxCornerRadiusTopEnd="5dp"
+            app:boxCornerRadiusTopStart="5dp"
+            app:boxCornerRadiusBottomEnd="5dp"
+            app:boxCornerRadiusBottomStart="5dp"
+            app:endIconDrawable="@drawable/ic_visibility_black_24dp"
+            app:endIconMode="password_toggle"
+            app:boxBackgroundColor="@color/white"
+            android:layout_marginBottom="30dp"
+            android:visibility="visible"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_password_register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/profile_image_register"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:visibility="gone"
+            android:scaleType="centerCrop"
+            android:src="@drawable/profile_img_test"
+            android:layout_marginBottom="10dp"
+            android:onClick="onPickProfileImageClick"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/description_entry_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Insert your description here!"
+            app:hintTextColor="@color/colorTextSecondary"
+            android:layout_gravity="left|top"
+            android:textAlignment="gravity"
+            app:boxCornerRadiusTopEnd="5dp"
+            app:boxCornerRadiusTopStart="5dp"
+            app:boxCornerRadiusBottomEnd="5dp"
+            app:boxCornerRadiusBottomStart="5dp"
+            app:boxBackgroundColor="@color/white"
+            android:visibility="gone"
+            android:layout_marginBottom="30dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_description_register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="3"
+                android:gravity="top"
+                android:textAlignment="gravity"
+                android:maxLines="5"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/register_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/register_container">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/register_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            app:cornerRadius="5dp"
+            android:text="Register"
+            android:enabled="false"
+            android:layout_alignParentLeft="true"
+            android:onClick="onRegisterClick"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/register_next_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cornerRadius="5dp"
+            android:text="Next"
+            android:layout_alignParentRight="true"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:onClick="onRegisterClick"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/register_back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cornerRadius="5dp"
+            android:text="Back"
+            android:enabled="false"
+            android:layout_alignParentLeft="true"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:onClick="onRegisterClick"/>
+    </RelativeLayout>
+
+</RelativeLayout>
