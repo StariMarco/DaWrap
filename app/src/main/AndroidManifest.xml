@@ -29,9 +29,7 @@
             android:name=".PostCommentsActivity"
             android:parentActivityName=".PostActivity" />
         <activity android:name=".BackdropContentActivity" />
-        <activity android:name=".MainActivity">
-
-        </activity>
+        <activity android:name=".MainActivity" android:parentActivityName=".UserAuthenticationActivity"/>
         <activity android:name=".PostActivity" />
     </application>
 

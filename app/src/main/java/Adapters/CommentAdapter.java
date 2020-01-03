@@ -23,6 +23,8 @@ import Singletons.DataHelper;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder>
 {
+    private static final String TAG = "CommentAdapter";
+
     public interface OnItemClickListener
     {
         void onLikeClick(TextView likeTxt, ImageButton btn, int position);
@@ -131,7 +133,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         // Set all properties
         String likes = comment.likesCount() + " \"like\"";
 
-        holder.ProfileImage.setImageResource(user.profileImage);
+        DataHelper.downloadImageIntoView(holder.ProfileImage, user.profileImage, TAG, R.drawable.profile_img_test);
         holder.LikesTextView.setText(likes);
         holder.TextTextView.setText(comment.text);
         holder.UsernameTextView.setText(user.username);

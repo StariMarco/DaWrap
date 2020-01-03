@@ -30,15 +30,24 @@ import android.widget.Toast;
 
 import com.alexzh.circleimageview.CircleImageView;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import Models.Post;
 import Models.User;
@@ -52,8 +61,9 @@ public class UserAuthenticationActivity extends AppCompatActivity
     private Integer _currentFragment;
     private View _loginUnderline, _registerUnderline;
     private final int PICK_IMAGE = 1;
-    private Bitmap _profileImage;
+    private Bitmap _profileImage = null;
     private ImageView _profileImageView;
+    public TextView _loadingTxt;
 
     private FirebaseAuth mAuth;
 
@@ -84,17 +94,18 @@ public class UserAuthenticationActivity extends AppCompatActivity
     {
         super.onStart();
         // Check if user is signed in
-        mAuth.signOut();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null)
         {
+            System.out.println("UID: " + currentUser.getEmail());
             loginUser(currentUser);
         }
     }
 
     private void loginUser(FirebaseUser currentUser)
     {
-        DataHelper.db.collection("users").document(currentUser.getUid()).get()
+        findViewById(R.id.login_button).setEnabled(false);
+        DataHelper.db.collection("users").document(currentUser.getEmail()).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful())
                     {
@@ -104,8 +115,12 @@ public class UserAuthenticationActivity extends AppCompatActivity
 
                         User user = document.toObject(User.class);
                         signIn(user);
-                    } else
+                    }
+                    else
+                    {
+                        findViewById(R.id.login_button).setEnabled(true);
                         Log.e(TAG, "Error while getting the user reference ", task.getException());
+                    }
                 });
     }
 
@@ -164,7 +179,92 @@ public class UserAuthenticationActivity extends AppCompatActivity
         String username = ((TextView)findViewById(R.id.txt_username_register)).getText().toString();
         String email = ((TextView)findViewById(R.id.txt_email_register)).getText().toString();
         String password = ((TextView)findViewById(R.id.txt_password_register)).getText().toString();
+        String description = ((TextView)findViewById(R.id.txt_description_register)).getText().toString();
+        findViewById(R.id.register_btn).setEnabled(false);
+        findViewById(R.id.register_next_btn).setEnabled(false);
+        findViewById(R.id.register_back_btn).setEnabled(false);
 
+        if(_profileImage != null)
+        {
+            // Check if the email already exists
+            mAuth.fetchSignInMethodsForEmail(email)
+                    .addOnCompleteListener(task -> {
+                        boolean isNewEmail = task.getResult().getSignInMethods().isEmpty();
+                        if(isNewEmail)
+                        {
+                            _loadingTxt = findViewById(R.id.image_uploading_text);
+                            // image id
+                            String imageId = UUID.randomUUID().toString();
+                            // Get the image
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            _profileImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            byte[] data = baos.toByteArray();
+
+                            // Upload profile image
+                            StorageReference storageReference = DataHelper.storage.getReference();
+                            StorageReference postImagesRef = storageReference.child("profileImages/" + imageId);
+                            UploadTask uploadTask = postImagesRef.putBytes(data);
+                            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                                Log.d(TAG, "image uploaded successfully: " + taskSnapshot.getMetadata().getPath());
+                                createUser(username, email, password, description, taskSnapshot.getMetadata().getPath());
+                            }).addOnFailureListener(e -> {
+                                Log.e(TAG, "Failed to upload image: ", e);
+                            }).addOnProgressListener(taskSnapshot -> {
+                                // Get upload progress
+                                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                                DecimalFormat df = new DecimalFormat("#0");
+                                String progressTxt = "Loading " + df.format(progress) + "%";
+                                _loadingTxt.setText(progressTxt);
+                            });
+                        }
+                        else
+                        {
+                            endRegisterAnimation();
+                            Toast.makeText(UserAuthenticationActivity.this, "The email already exists!", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(e -> {
+                        endRegisterAnimation();
+                        Toast.makeText(UserAuthenticationActivity.this, "Error while checking the email!", Toast.LENGTH_SHORT).show();
+                    });
+
+        }
+        else
+        {
+            createUser(username, email, password, description, "profileImages/default.png");
+        }
+        // Animation
+        View registerContainer = findViewById(R.id.register_container);
+        registerContainer.animate().alpha(0f).setDuration(100).setListener(new AnimatorListenerAdapter()
+        {
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                super.onAnimationEnd(animation);
+                findViewById(R.id.register_animation_layout).setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void endRegisterAnimation()
+    {
+        findViewById(R.id.register_btn).setEnabled(true);
+        findViewById(R.id.register_next_btn).setEnabled(true);
+        findViewById(R.id.register_back_btn).setEnabled(true);
+        // End animation
+        View registerContainer = findViewById(R.id.register_container);
+        registerContainer.animate().alpha(1f).setDuration(100).setListener(new AnimatorListenerAdapter()
+        {
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                super.onAnimationEnd(animation);
+                findViewById(R.id.register_animation_layout).setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    private void createUser(String username, String email, String password, String description, String imagePath)
+    {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if(task.isSuccessful())
@@ -175,14 +275,14 @@ public class UserAuthenticationActivity extends AppCompatActivity
                         User user = new User();
                         user.userId = currentUser.getUid();
                         user.username = username;
-                        user.description = null;
-                        user.profileImage = R.id.usr_profile_image;
+                        user.description = description;
+                        user.profileImage = imagePath;
                         user.follows = new ArrayList<String>();
                         user.followers = new ArrayList<String>();
                         user.savedPosts = new ArrayList<Post>();
 
                         // Add the user to the database
-                        DataHelper.db.collection("users").document(user.userId).set(user)
+                        DataHelper.db.collection("users").document(email).set(user)
                                 .addOnSuccessListener(aVoid -> {
                                     Log.d(TAG, "User document added: " + user.userId);
                                     // Sign in user
@@ -195,7 +295,8 @@ public class UserAuthenticationActivity extends AppCompatActivity
                     else
                     {
                         Log.e(TAG, "Error creating the user", task.getException());
-                        Toast.makeText(UserAuthenticationActivity.this, "Register failed.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UserAuthenticationActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        endRegisterAnimation();
                     }
                 });
     }
@@ -222,7 +323,7 @@ public class UserAuthenticationActivity extends AppCompatActivity
                     else
                     {
                         Log.e(TAG, "Error login the user", task.getException());
-                        Toast.makeText(UserAuthenticationActivity.this, "Login failed.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UserAuthenticationActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -264,8 +365,8 @@ public class UserAuthenticationActivity extends AppCompatActivity
                     return;
                 }
                 InputStream imageStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-                _profileImage = BitmapFactory.decodeStream(imageStream);
-                _profileImageView.setImageBitmap(SystemHelper.getCircularBitmap(_profileImage));
+                _profileImage = SystemHelper.getCircularBitmap(BitmapFactory.decodeStream(imageStream));
+                _profileImageView.setImageBitmap(_profileImage);
             } catch (FileNotFoundException e)
             {
                 e.printStackTrace();

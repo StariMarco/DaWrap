@@ -7,7 +7,7 @@ public class User implements Serializable
 {
     public String userId;
     public String username;
-    public int profileImage;
+    public String profileImage;
     public String description;
     public ArrayList<String> follows;
     public ArrayList<String> followers;
@@ -15,7 +15,7 @@ public class User implements Serializable
 
     public User(){}
 
-    public User(String userId, String username, int profileImage, String description)
+    public User(String userId, String username, String profileImage, String description)
     {
         this.userId = userId;
         this.username = username;
@@ -87,7 +87,7 @@ public class User implements Serializable
         return username;
     }
 
-    public int getProfileImage()
+    public String getProfileImage()
     {
         return profileImage;
     }

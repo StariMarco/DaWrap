@@ -1,37 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:layout_margin="5dp"
-    android:elevation="3dp"
-    android:clipToPadding="false">
+    android:backgroundTint="@color/white"
+    android:layout_centerInParent="true"
+    android:clipToPadding="false"
+    android:padding="5dp">
 
-    <ImageButton
-        android:id="@+id/usr_post_image"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
         android:layout_centerInParent="true"
-        android:background="@color/white"/>
+        app:cardBackgroundColor="@null"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="3dp"
+        android:clipToPadding="false">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:clipToPadding="false">
+            <ImageButton
+                android:id="@+id/usr_post_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                android:maxHeight="180dp" />
 
-    <CustomViews.GradientTextView
-        android:id="@+id/usr_description_txt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="@dimen/fontSizeSmall"
-        android:textColor="@color/colorTextSecondary"
-        android:textAlignment="gravity"
-        android:gravity="center_horizontal|center_vertical"
-        android:lineSpacingExtra="3dp"
-        android:maxLines="8"
-        android:padding="15dp"
-        android:minHeight="100dp"
-        android:background="@color/white"
-        android:layout_centerInParent="true"/>
+            <CustomViews.GradientTextView
+                android:id="@+id/usr_description_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="@dimen/fontSizeSmall"
+                android:textColor="@color/colorTextSecondary"
+                android:textAlignment="gravity"
+                android:gravity="center_horizontal|center_vertical"
+                android:lineSpacingExtra="3dp"
+                android:maxLines="8"
+                android:padding="15dp"
+                android:minHeight="100dp"
+                android:background="@color/white"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </RelativeLayout>

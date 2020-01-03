@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        User currentUser = getIntent().getParcelableExtra("CURRENT_USER");
+        User currentUser = (User) getIntent().getSerializableExtra("CURRENT_USER");
+        DataHelper.setCurrentUser(currentUser);
 
         setupBottomNavigation(savedInstanceState);
     }

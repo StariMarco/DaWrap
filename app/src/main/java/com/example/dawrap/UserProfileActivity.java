@@ -22,6 +22,8 @@ import Singletons.DataHelper;
 
 public class UserProfileActivity extends AppCompatActivity
 {
+    private static final String TAG = "UserProfileActivity";
+
     private User _user;
     private ArrayList<Post> _posts;
     private RecyclerView _postListView;
@@ -71,7 +73,7 @@ public class UserProfileActivity extends AppCompatActivity
     private void userDataSetup()
     {
         // Profile image
-        ((CircleImageView) findViewById(R.id.usr_profile_image)).setImageResource(_user.profileImage);
+        DataHelper.downloadImageIntoView((findViewById(R.id.usr_profile_image)), _user.profileImage, TAG, R.drawable.profile_img_test);
         // username text
         ((TextView) findViewById(R.id.usr_username_txt)).setText(_user.username);
         // followers text

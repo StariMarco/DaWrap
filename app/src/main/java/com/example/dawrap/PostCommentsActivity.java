@@ -91,7 +91,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
 
         // Profile image
         CircleImageView profileImgView = findViewById(R.id.image_profile);
-        profileImgView.setImageResource(user.profileImage);
+        DataHelper.downloadImageIntoView(profileImgView, user.profileImage, TAG, R.drawable.profile_img_test);
         profileImgView.setOnClickListener(v -> {
             // Open user profile
             openUserProfile(user.userId);
@@ -113,7 +113,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
 
         // Add comment profile image
         CircleImageView addCommentImgView = findViewById(R.id.add_comment_profile_image);
-        addCommentImgView.setImageResource(DataHelper.getCurrentUser().profileImage);
+        DataHelper.downloadImageIntoView(addCommentImgView, DataHelper.getCurrentUser().profileImage, TAG, R.drawable.post_img_test_3);
         addCommentImgView.setOnItemSelectedClickListener(new ItemSelectedListener()
         {
             @Override

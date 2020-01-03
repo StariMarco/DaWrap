@@ -4,6 +4,6 @@
     <item
         android:id="@+id/btn_delete_comment"
         android:icon="@drawable/ic_settings_white_24dp"
-        android:title="Delete Comment"
+        android:title="Delete Post"
         app:showAsAction="never"/>
 </menu>

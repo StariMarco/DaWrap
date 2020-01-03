@@ -180,7 +180,6 @@ public class CreateImagePost extends AppCompatActivity
             DecimalFormat df = new DecimalFormat("#0");
             String progressTxt = "Uploading " + df.format(progress) + "%";
             _uploadingText.setText(progressTxt);
-            Log.d(TAG, "Progress: " + progressTxt);
         });
     }
 

@@ -22,12 +22,15 @@ import androidx.fragment.app.Fragment;
 
 import com.alexzh.circleimageview.CircleImageView;
 import com.alexzh.circleimageview.ItemSelectedListener;
+import com.google.firebase.auth.FirebaseAuth;
 
 import Models.User;
 import Singletons.DataHelper;
 
 public class UserProfileFragment extends Fragment implements View.OnClickListener
 {
+    private static final String TAG = "UserProfileFragment";
+
     private Button _myPostsBtn, _savedPostsBtn;
     private Integer _currentFragmentId = R.id.my_posts_btn;
     private View _fragmentContainer, _myPostsUnderline, _savedPostsUnderline;
@@ -59,13 +62,16 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         // username text
         ((TextView)view.findViewById(R.id.usr_lbl_username)).setText(currentUser.username);
 
+        // description
+        ((TextView)view.findViewById(R.id.usr_description_txt)).setText(currentUser.description);
+
         // followers text
         String followersTxt = currentUser.followersCount() + " followers";
         ((TextView)view.findViewById(R.id.usr_lbl_followers)).setText(followersTxt);
 
         // Profile image
         CircleImageView profileImage = view.findViewById(R.id.usr_profile_image);
-        profileImage.setImageResource(currentUser.profileImage);
+        DataHelper.downloadImageIntoView(profileImage, currentUser.profileImage, TAG, R.drawable.profile_img_test);
         profileImage.setOnItemSelectedClickListener(new ItemSelectedListener()
         {
             @Override
@@ -122,6 +128,12 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             if (item.getItemId() == R.id.usr_edit_profile)
             {
                 Log.d("UserProfileFragment", "Edit Profile");
+                return true;
+            }
+            else if (item.getItemId() == R.id.usr_logout)
+            {
+                FirebaseAuth.getInstance().signOut();
+                getActivity().onBackPressed();
                 return true;
             }
             return false;

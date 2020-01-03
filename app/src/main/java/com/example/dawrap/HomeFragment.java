@@ -58,12 +58,9 @@ public class HomeFragment extends Fragment
                     {
                         for (QueryDocumentSnapshot document : task.getResult())
                         {
-//                            Post p = new Post();
-//                            Map<String, Object> map = document.getData();
-//                            Log.d(TAG, "post => " + map);
                             DataHelper._posts.add(document.toObject(Post.class));
-                            postListViewSetup(view);
                         }
+                        postListViewSetup(view);
                     }
                     else Log.e(TAG, "Error getting documents: ", task.getException());
                 });
