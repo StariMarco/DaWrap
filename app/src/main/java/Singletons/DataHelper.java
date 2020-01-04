@@ -15,6 +15,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +31,10 @@ public class DataHelper
     public static FirebaseStorage storage;
 
     private static User _currentUser;
+    public static String _currentUserEmail;
     public static ArrayList<Post> _posts;
     private static ArrayList<User> _users;
+    public static ArrayList<Post> _savedPosts;
 
     private static Map<String, Bitmap> _downloadedImages;
 
@@ -44,6 +47,7 @@ public class DataHelper
             storage = FirebaseStorage.getInstance();
             _posts = new ArrayList<>();
             _users = new ArrayList<>();
+            _savedPosts = new ArrayList<>();
             getUsersFromFirebase();
             _downloadedImages = new HashMap<>();
         }
@@ -136,6 +140,19 @@ public class DataHelper
                             _users.add(document.toObject(User.class));
                     }
                     else Log.e(TAG, "Error getting users", task.getException());
+                });
+    }
+
+    private static void getSavedPostsFromFirebase()
+    {
+        db.collection("posts").whereIn("postId",_currentUser.savedPosts).get()
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful())
+                    {
+                        for(QueryDocumentSnapshot document : task.getResult())
+                            _savedPosts.add(document.toObject(Post.class));
+                    }
+                    else Log.e(TAG, "Error getting saved posts", task.getException());
                 });
     }
 }

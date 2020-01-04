@@ -10,7 +10,7 @@
     android:padding="5dp">
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         app:cardBackgroundColor="@null"
@@ -18,18 +18,19 @@
         app:cardElevation="3dp"
         android:clipToPadding="false">
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:gravity="center"
             android:clipToPadding="false">
             <ImageButton
                 android:id="@+id/usr_post_image"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:background="@color/white"
-                android:maxHeight="180dp" />
+                android:maxHeight="180dp"/>
 
             <CustomViews.GradientTextView
                 android:id="@+id/usr_description_txt"

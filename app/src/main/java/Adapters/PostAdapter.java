@@ -48,6 +48,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         public ImageButton CommentBtn;
         public ImageButton SavePostBtn;
         public View PostCard;
+        public View ImageLayout;
 
         public ViewHolder(View itemView, final OnItemClickListener listener)
         {
@@ -64,6 +65,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
             CommentBtn = itemView.findViewById(R.id.btn_comment);
             SavePostBtn = itemView.findViewById(R.id.btn_save_post);
             PostCard = itemView.findViewById(R.id.post_card);
+            ImageLayout = itemView.findViewById(R.id.img_lyt);
+
 
             // Click listener for like button
             LikeBtn.setOnClickListener(v -> {
@@ -159,16 +162,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         // Set all properties
         viewHolder.UsenameTextView.setText(user.username);
         viewHolder.TitleTextView.setText(post.title);
-        DataHelper.downloadImageIntoView(viewHolder.ProfileImageView, user.profileImage, TAG, R.drawable.profile_img_test);
+        DataHelper.downloadImageIntoPost(viewHolder.ProfileImageView, user.profileImage, TAG, R.drawable.profile_img_test, (post.image == null) ? viewHolder.PostCard : null);
 
         if(post.image == null)
-        {
-            viewHolder.PostImageView.setVisibility(View.GONE);
-            viewHolder.PostCard.setVisibility(View.VISIBLE);
-        }
+            viewHolder.ImageLayout.setVisibility(View.GONE);
         else
         {
-            viewHolder.PostImageView.setVisibility(View.VISIBLE);
+            viewHolder.ImageLayout.setVisibility(View.VISIBLE);
             DataHelper.downloadImageIntoPost(viewHolder.PostImageView, post.image, TAG, R.drawable.post_img_test_3, viewHolder.PostCard);
         }
 

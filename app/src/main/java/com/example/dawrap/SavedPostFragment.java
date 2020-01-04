@@ -38,7 +38,7 @@ public class SavedPostFragment extends Fragment
 
         _notFoundLayout = view.findViewById(R.id.not_found_layout);
         _postListView = view.findViewById(R.id.usr_saved_post_list);
-        ArrayList<Post> userSavedPosts = DataHelper.getCurrentUser().getSavedPosts();
+        ArrayList<Post> userSavedPosts = DataHelper._savedPosts;
 
         if(userSavedPosts.size() > 0)
             // Load the saved post list view
@@ -77,7 +77,7 @@ public class SavedPostFragment extends Fragment
         {
             _adapter.notifyDataSetChanged();
         }
-        if(DataHelper.getCurrentUser().getSavedPosts().size() == 0)
+        if(DataHelper.getCurrentUser().savedPostsCount() == 0)
         {
             // If there are no saved post then show the "not found" animation
             _postListView.setVisibility(View.GONE);

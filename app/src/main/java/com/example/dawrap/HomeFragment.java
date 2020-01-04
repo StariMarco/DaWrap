@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +17,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -56,9 +60,13 @@ public class HomeFragment extends Fragment
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful())
                     {
+                        User currentUser = DataHelper.getCurrentUser();
                         for (QueryDocumentSnapshot document : task.getResult())
                         {
-                            DataHelper._posts.add(document.toObject(Post.class));
+                            Post p = document.toObject(Post.class);
+                            DataHelper._posts.add(p);
+                            if(currentUser.hasSavedThisPost(p.postId))
+                                DataHelper._savedPosts.add(p);
                         }
                         postListViewSetup(view);
                     }
@@ -112,13 +120,32 @@ public class HomeFragment extends Fragment
                         // remove like
                         btn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                         post.removeLike(currentUser.userId);
-
+                        DataHelper.db.collection("posts").document(post.postId).update("likes", FieldValue.arrayRemove(currentUser.userId))
+                                .addOnCompleteListener(task -> {
+                                    if(!task.isSuccessful())
+                                    {
+                                        Log.e(TAG, "Unable to remove the like", task.getException());
+                                        btn.setImageResource(R.drawable.ic_favorite_black_24dp);
+                                        post.addLike(currentUser.userId);
+                                        likeTxt.setText(String.valueOf(post.likesCount()));
+                                    }
+                                });
                     }
                     else
                     {
                         // like
                         btn.setImageResource(R.drawable.ic_favorite_black_24dp);
                         post.addLike(currentUser.userId);
+                        DataHelper.db.collection("posts").document(post.postId).update("likes", FieldValue.arrayUnion(currentUser.userId))
+                                .addOnCompleteListener(task -> {
+                                    if(!task.isSuccessful())
+                                    {
+                                        Log.e(TAG, "Unable to like the post", task.getException());
+                                        btn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                                        post.removeLike(currentUser.userId);
+                                        likeTxt.setText(String.valueOf(post.likesCount()));
+                                    }
+                                });
                     }
                 }catch (Exception e)
                 {
@@ -137,13 +164,39 @@ public class HomeFragment extends Fragment
                 {
                     // Remove from saved
                     btn.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
-                    currentUser.removePost(post);
+                    DataHelper.db.collection("users").document(DataHelper._currentUserEmail).update("savedPosts", FieldValue.arrayRemove(post.postId))
+                            .addOnCompleteListener(task -> {
+                                if(task.isSuccessful())
+                                {
+                                    currentUser.removePost(post.postId);
+                                    DataHelper._savedPosts.remove(post);
+                                }
+                                else
+                                {
+                                    Log.e(TAG, "Unable to unsave the post", task.getException());
+                                    btn.setImageResource(R.drawable.ic_bookmark_black_24dp);
+                                    Toast.makeText(getActivity(), "Unable to unsave the post", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 }
                 else
                 {
                     // Save
                     btn.setImageResource(R.drawable.ic_bookmark_black_24dp);
-                    currentUser.savePost(post);
+                    DataHelper.db.collection("users").document(DataHelper._currentUserEmail).update("savedPosts", FieldValue.arrayUnion(post.postId))
+                            .addOnCompleteListener(task -> {
+                                if(task.isSuccessful())
+                                {
+                                    currentUser.savePost(post.postId);
+                                    DataHelper._savedPosts.add(post);
+                                }
+                                else
+                                {
+                                    Log.e(TAG, "Unable to save the post", task.getException());
+                                    btn.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
+                                    Toast.makeText(getActivity(), "Unable to save the post", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 }
             }
 

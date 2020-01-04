@@ -97,14 +97,13 @@ public class UserAuthenticationActivity extends AppCompatActivity
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null)
         {
-            System.out.println("UID: " + currentUser.getEmail());
+            DataHelper._currentUserEmail = currentUser.getEmail();
             loginUser(currentUser);
         }
     }
 
     private void loginUser(FirebaseUser currentUser)
     {
-        findViewById(R.id.login_button).setEnabled(false);
         DataHelper.db.collection("users").document(currentUser.getEmail()).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful())
@@ -114,6 +113,7 @@ public class UserAuthenticationActivity extends AppCompatActivity
                             Log.e(TAG, "cannot find the user ", task.getException());
 
                         User user = document.toObject(User.class);
+                        findViewById(R.id.login_button).setEnabled(true);
                         signIn(user);
                     }
                     else
@@ -197,7 +197,7 @@ public class UserAuthenticationActivity extends AppCompatActivity
                             String imageId = UUID.randomUUID().toString();
                             // Get the image
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            _profileImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            _profileImage.compress(Bitmap.CompressFormat.JPEG, 30, baos);
                             byte[] data = baos.toByteArray();
 
                             // Upload profile image
@@ -270,6 +270,7 @@ public class UserAuthenticationActivity extends AppCompatActivity
                     if(task.isSuccessful())
                     {
                         FirebaseUser currentUser = mAuth.getCurrentUser();
+                        DataHelper._currentUserEmail = currentUser.getEmail();
 
                         // Create the new user
                         User user = new User();
@@ -279,17 +280,19 @@ public class UserAuthenticationActivity extends AppCompatActivity
                         user.profileImage = imagePath;
                         user.follows = new ArrayList<String>();
                         user.followers = new ArrayList<String>();
-                        user.savedPosts = new ArrayList<Post>();
+                        user.savedPosts = new ArrayList<String>();
 
                         // Add the user to the database
                         DataHelper.db.collection("users").document(email).set(user)
                                 .addOnSuccessListener(aVoid -> {
                                     Log.d(TAG, "User document added: " + user.userId);
+                                    findViewById(R.id.register_animation_layout).setVisibility(View.INVISIBLE);
                                     // Sign in user
                                     signIn(user);
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e(TAG, "Error adding user", e);
+                                    findViewById(R.id.register_animation_layout).setVisibility(View.INVISIBLE);
                                 });
                     }
                     else
@@ -306,6 +309,7 @@ public class UserAuthenticationActivity extends AppCompatActivity
         String email = ((TextView)findViewById(R.id.txt_email_login)).getText().toString();
         String password = ((TextView)findViewById(R.id.txt_password_login)).getText().toString();
 
+        findViewById(R.id.login_button).setEnabled(false);
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if(task.isSuccessful())
@@ -318,12 +322,14 @@ public class UserAuthenticationActivity extends AppCompatActivity
                             Toast.makeText(UserAuthenticationActivity.this, "Login failed.", Toast.LENGTH_SHORT).show();
                         }
 
+                        DataHelper._currentUserEmail = currentUser.getEmail();
                         loginUser(currentUser);
                     }
                     else
                     {
                         Log.e(TAG, "Error login the user", task.getException());
                         Toast.makeText(UserAuthenticationActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        findViewById(R.id.login_button).setEnabled(true);
                     }
                 });
     }

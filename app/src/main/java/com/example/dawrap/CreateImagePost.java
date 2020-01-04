@@ -4,10 +4,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -22,8 +26,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +42,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 import Models.Comment;
+import Models.ImageModifier;
 import Models.Post;
 import Singletons.DataHelper;
 import Singletons.SystemHelper;
@@ -108,22 +118,24 @@ public class CreateImagePost extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == PICK_IMAGE)
         {
-            try
+            // Get the image
+            if(data == null)
             {
-                // Get the image
-                if(data == null)
-                {
-                    super.onBackPressed();
-                    return;
-                }
-                InputStream imageStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-                _imageBitmap = BitmapFactory.decodeStream(imageStream);
-                _imageView.setImageBitmap(_imageBitmap);
-                findViewById(R.id.change_image_btn).setVisibility(View.VISIBLE);
-            } catch (FileNotFoundException e)
-            {
-                e.printStackTrace();
+                super.onBackPressed();
+                return;
             }
+
+            // Compress the image
+            _imageBitmap = new ImageModifier().compressImage(data.getData(), this);
+            if(_imageBitmap == null)
+            {
+                Toast.makeText(CreateImagePost.this, "Error while compressing the image!", Toast.LENGTH_SHORT).show();
+                super.onBackPressed();
+            }
+
+            // Show the compressed image
+            _imageView.setImageBitmap(_imageBitmap);
+            findViewById(R.id.change_image_btn).setVisibility(View.VISIBLE);
         }
     }
 
@@ -160,17 +172,20 @@ public class CreateImagePost extends AppCompatActivity
 
     private void uploadImageToFirestore()
     {
-        StorageReference storageReference = DataHelper.storage.getReference();
+        // Compress the bitmap image into byte array
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        _imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        _imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
         byte[] data = baos.toByteArray();
 
-        StorageReference postImagesRef = storageReference.child("postImages/" + _uniqueId);
+        // Get the image storage reference
+        StorageReference postImagesRef = DataHelper.storage.getReference().child("postImages/" + _uniqueId);
+
+        // Upload the image
         UploadTask uploadTask = postImagesRef.putBytes(data);
         uploadTask.addOnSuccessListener(taskSnapshot -> {
             Log.d(TAG, "image uploaded successfully: " + taskSnapshot.getMetadata().getPath());
             // Firebase Firestore
-            uploadPostToFirstore(_uniqueId, taskSnapshot.getMetadata().getPath());
+            uploadPostToFirestore(_uniqueId, taskSnapshot.getMetadata().getPath());
 
         }).addOnFailureListener(e -> {
             Log.e(TAG, "Failed to upload image: ", e);
@@ -183,7 +198,7 @@ public class CreateImagePost extends AppCompatActivity
         });
     }
 
-    private void uploadPostToFirstore(String uniqueId, String path)
+    private void uploadPostToFirestore(String uniqueId, String path)
     {
         Post newPost = new Post();
         newPost.postId = uniqueId;

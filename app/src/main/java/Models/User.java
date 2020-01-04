@@ -11,7 +11,7 @@ public class User implements Serializable
     public String description;
     public ArrayList<String> follows;
     public ArrayList<String> followers;
-    public ArrayList<Post> savedPosts;
+    public ArrayList<String> savedPosts;
 
     public User(){}
 
@@ -29,22 +29,22 @@ public class User implements Serializable
 
     public boolean hasSavedThisPost(String postId)
     {
-        for(Post p : savedPosts)
+        for(String id : savedPosts)
         {
-            if(postId.equals(p.postId))
+            if(postId.equals(id))
                 return true;
         }
         return false;
     }
 
-    public void savePost(Post post)
+    public void savePost(String postId)
     {
-        savedPosts.add(post);
+        savedPosts.add(postId);
     }
 
-    public void removePost(Post post)
+    public void removePost(String postId)
     {
-        savedPosts.remove(post);
+        savedPosts.remove(postId);
     }
 
     public int followersCount(){return followers.size(); }
@@ -72,9 +72,9 @@ public class User implements Serializable
     }
 
     // GET
-    public ArrayList<Post> getSavedPosts()
+    public int savedPostsCount()
     {
-        return savedPosts;
+        return savedPosts.size();
     }
 
     public String getUserId()

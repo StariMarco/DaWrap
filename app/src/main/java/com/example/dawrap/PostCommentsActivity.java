@@ -12,13 +12,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alexzh.circleimageview.CircleImageView;
 import com.alexzh.circleimageview.ItemSelectedListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 
@@ -317,12 +321,32 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             // remove like
             btn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
             _post.removeLike(currentUser.userId);
+            DataHelper.db.collection("posts").document(_post.postId).update("likes", FieldValue.arrayRemove(currentUser.userId))
+                    .addOnCompleteListener(task -> {
+                        if(!task.isSuccessful())
+                        {
+                            Log.e(TAG, "Unable to remove the like", task.getException());
+                            btn.setImageResource(R.drawable.ic_favorite_black_24dp);
+                            _post.addLike(currentUser.userId);
+                            likeTxt.setText(String.valueOf(_post.likesCount()));
+                        }
+                    });
         }
         else
         {
             // like
             btn.setImageResource(R.drawable.ic_favorite_black_24dp);
             _post.addLike(currentUser.userId);
+            DataHelper.db.collection("posts").document(_post.postId).update("likes", FieldValue.arrayUnion(currentUser.userId))
+                    .addOnCompleteListener(task -> {
+                        if(!task.isSuccessful())
+                        {
+                            Log.e(TAG, "Unable to remove the like", task.getException());
+                            btn.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                            _post.removeLike(currentUser.userId);
+                            likeTxt.setText(String.valueOf(_post.likesCount()));
+                        }
+                    });
         }
         likeTxt.setText(String.valueOf(_post.getLikes().size()));
     }
@@ -336,13 +360,39 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         {
             // Remove from saved
             btn.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
-            currentUser.removePost(_post);
+            DataHelper.db.collection("users").document(DataHelper._currentUserEmail).update("savedPosts", FieldValue.arrayRemove(_post.postId))
+                    .addOnCompleteListener(task -> {
+                        if(task.isSuccessful())
+                        {
+                            currentUser.removePost(_post.postId);
+                            DataHelper._savedPosts.remove(_post);
+                        }
+                        else
+                        {
+                            Log.e(TAG, "Unable to unsave the post", task.getException());
+                            btn.setImageResource(R.drawable.ic_bookmark_black_24dp);
+                            Toast.makeText(PostCommentsActivity.this, "Unable to unsave the post", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
         else
         {
             // Save
             btn.setImageResource(R.drawable.ic_bookmark_black_24dp);
-            currentUser.savePost(_post);
+            DataHelper.db.collection("users").document(DataHelper._currentUserEmail).update("savedPosts", FieldValue.arrayUnion(_post.postId))
+                    .addOnCompleteListener(task -> {
+                        if(task.isSuccessful())
+                        {
+                            currentUser.savePost(_post.postId);
+                            DataHelper._savedPosts.add(_post);
+                        }
+                        else
+                        {
+                            Log.e(TAG, "Unable to save the post", task.getException());
+                            btn.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
+                            Toast.makeText(PostCommentsActivity.this, "Unable to save the post", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
 
@@ -416,13 +466,19 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         builder.setTitle("Delete Post");
         builder.setMessage("Do you want to delete this post?");
         builder.setPositiveButton("Confirm", (dialog, which) -> {
-            DataHelper.db.collection("posts").document(_post.postId).delete()
+            DataHelper.storage.getReference().child(_post.image).delete()
                     .addOnSuccessListener(aVoid -> {
-                        DataHelper._posts.remove(_post);
-                        super.onBackPressed();
+                        DataHelper.db.collection("posts").document(_post.postId).delete()
+                                .addOnSuccessListener(a -> {
+                                    DataHelper._posts.remove(_post);
+                                    super.onBackPressed();
+                                }).addOnFailureListener(e -> {
+                            Log.e(TAG, "Error in deleting the post", e);
+                        });
                     }).addOnFailureListener(e -> {
-                Log.e(TAG, "Error in deleting the post", e);
-            });
+                        Toast.makeText(PostCommentsActivity.this, "Error while deleting the image!", Toast.LENGTH_SHORT).show();
+                    });
+
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> {

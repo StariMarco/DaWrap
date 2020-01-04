@@ -109,7 +109,7 @@
             app:boxCornerRadiusTopStart="5dp"
             app:boxCornerRadiusBottomEnd="5dp"
             app:boxCornerRadiusBottomStart="5dp"
-            app:endIconDrawable="@drawable/ic_visibility_black_24dp"
+            app:endIconDrawable="@drawable/toggle_visibility"
             app:endIconMode="password_toggle"
             app:boxBackgroundColor="@color/white"
             android:layout_marginBottom="30dp"
