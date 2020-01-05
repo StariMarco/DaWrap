@@ -159,7 +159,7 @@
                     <ImageButton
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@drawable/ic_mode_comment_black_24dp"
+                        android:src="@drawable/ic_comment_black_border"
                         android:background="@null"
                         android:scaleType="fitXY"
                         android:padding="5dp"/>

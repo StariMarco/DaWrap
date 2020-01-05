@@ -5,15 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UserAuthenticationActivity"
-    android:background="@color/colorPrimary"
-    android:padding="10dp">
+    android:background="@color/white"
+    android:padding="10dp"
+    android:clipToPadding="false">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:background="@drawable/post_border_shape"
-        android:backgroundTint="@color/white">
+        android:elevation="5dp"
+        android:background="@drawable/orange_yellow_gradient_auth">
         <GridLayout
             android:id="@+id/auth_buttons_layout"
             android:layout_width="match_parent"
@@ -27,6 +28,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:text="Login"
+                android:fontFamily="@font/roboto"
+                android:textColor="@color/white"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:onClick="onChangeFragmentClick"
                 android:layout_column="0"
@@ -38,6 +41,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:text="Register"
+                android:fontFamily="@font/roboto"
+                android:textColor="@color/white"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:onClick="onChangeFragmentClick"
                 android:layout_column="1"
@@ -50,7 +55,7 @@
                 android:layout_width="100dp"
                 android:layout_height="2dp"
                 style="@style/Divider"
-                android:background="@color/colorPrimaryLight"
+                android:background="@color/white"
                 android:visibility="visible"
                 android:scaleX="0.8"
                 android:layout_column="0"
@@ -61,7 +66,7 @@
                 android:layout_width="100dp"
                 android:layout_height="2dp"
                 style="@style/Divider"
-                android:background="@color/colorPrimaryLight"
+                android:background="@color/white"
                 android:visibility="visible"
                 android:scaleX="0"
                 android:layout_column="1"

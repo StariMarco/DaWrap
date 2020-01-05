@@ -22,4 +22,11 @@
         <item name="cornerRadius">16dp</item>
     </style>
 
+    <style name="auth_entry" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="hintTextColor">@color/colorTextSecondary</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeColor">@color/colorPrimaryLight</item>
+        <item name="boxBackgroundColor">@color/colorPrimaryLight2</item>
+    </style>
+
 </resources>

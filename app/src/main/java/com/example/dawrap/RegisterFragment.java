@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment;
 
 import com.alexzh.circleimageview.CircleImageView;
 import com.alexzh.circleimageview.ItemSelectedListener;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.FileNotFoundException;
@@ -38,7 +39,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener
     private TextInputEditText _usernameTxt, _emailTxt, _passwordTxt, _descriptionTxt;
     private View _usernameEntry, _emailEntry, _passwordEntry, _descriptionEntry;
     private ImageView _profileImg;
-    private View _registerBtn, _backBtn, _nextBtn, _buttonLayout;
+    private MaterialButton _registerBtn;
+    private View _backBtn, _nextBtn, _buttonLayout;
     private boolean hide = true;
 
     private float _registerPathLength = 0, _registerButtonWidth = 0, _buttonLayoutWidth = 0;
@@ -187,6 +189,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener
     private void isUserReady()
     {
         _registerBtn.setEnabled(false);
+        _registerBtn.setTextColor(getResources().getColor(R.color.gray));
         // The entries are empty
         if(_usernameTxt.getText().toString().isEmpty() || _emailTxt.getText().toString().isEmpty() || _descriptionTxt.getText().toString().isEmpty() || _passwordTxt.getText().toString().isEmpty())
             return;
@@ -197,6 +200,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener
 
         // The user is ready
         _registerBtn.setEnabled(true);
+        _registerBtn.setTextColor(getResources().getColor(R.color.colorPrimary));
     }
 
     private void nextSectionAnimation()

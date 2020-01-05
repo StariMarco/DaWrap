@@ -8,8 +8,7 @@
     android:paddingTop="20dp"
     android:paddingBottom="10dp"
     android:clipToPadding="false"
-    android:background="@drawable/post_backgroung_shape"
-    android:backgroundTint="@color/white">
+    android:background="@drawable/transparent">
 
     <LinearLayout
         android:id="@+id/register_animation_layout"
@@ -53,18 +52,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
-            app:hintTextColor="@color/colorTextSecondary"
             app:boxCornerRadiusTopEnd="5dp"
             app:boxCornerRadiusTopStart="5dp"
             app:boxCornerRadiusBottomEnd="5dp"
             app:boxCornerRadiusBottomStart="5dp"
             app:endIconDrawable="@drawable/ic_cancel_black_24dp"
             app:endIconMode="clear_text"
-            app:boxBackgroundColor="@color/white"
             android:layout_marginBottom="10dp"
             android:elevation="10dp"
             android:visibility="visible"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+            style="@style/auth_entry">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_username_register"
@@ -79,17 +76,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            app:hintTextColor="@color/colorTextSecondary"
             app:boxCornerRadiusTopEnd="5dp"
             app:boxCornerRadiusTopStart="5dp"
             app:boxCornerRadiusBottomEnd="5dp"
             app:boxCornerRadiusBottomStart="5dp"
             app:endIconDrawable="@drawable/ic_cancel_black_24dp"
             app:endIconMode="clear_text"
-            app:boxBackgroundColor="@color/white"
             android:layout_marginBottom="10dp"
             android:visibility="visible"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+            style="@style/auth_entry">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_email_register"
@@ -104,17 +99,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            app:hintTextColor="@color/colorTextSecondary"
             app:boxCornerRadiusTopEnd="5dp"
             app:boxCornerRadiusTopStart="5dp"
             app:boxCornerRadiusBottomEnd="5dp"
             app:boxCornerRadiusBottomStart="5dp"
             app:endIconDrawable="@drawable/toggle_visibility"
             app:endIconMode="password_toggle"
-            app:boxBackgroundColor="@color/white"
             android:layout_marginBottom="30dp"
             android:visibility="visible"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+            style="@style/auth_entry">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_password_register"
@@ -139,17 +132,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Insert your description here!"
-            app:hintTextColor="@color/colorTextSecondary"
             android:layout_gravity="left|top"
             android:textAlignment="gravity"
             app:boxCornerRadiusTopEnd="5dp"
             app:boxCornerRadiusTopStart="5dp"
             app:boxCornerRadiusBottomEnd="5dp"
             app:boxCornerRadiusBottomStart="5dp"
-            app:boxBackgroundColor="@color/white"
             android:visibility="gone"
             android:layout_marginBottom="30dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+            style="@style/auth_entry">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_description_register"
@@ -177,7 +168,9 @@
             android:paddingRight="30dp"
             app:cornerRadius="5dp"
             android:text="Register"
+            android:textColor="@color/gray"
             android:enabled="false"
+            android:backgroundTint="@color/white"
             android:layout_alignParentLeft="true"
             android:onClick="onRegisterClick"/>
 
@@ -187,6 +180,8 @@
             android:layout_height="wrap_content"
             app:cornerRadius="5dp"
             android:text="Next"
+            android:textColor="@color/white"
+            app:strokeColor="@color/white"
             android:layout_alignParentRight="true"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:onClick="onRegisterClick"/>
@@ -198,6 +193,8 @@
             app:cornerRadius="5dp"
             android:text="Back"
             android:enabled="false"
+            android:textColor="@color/white"
+            app:strokeColor="@color/white"
             android:layout_alignParentLeft="true"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:onClick="onRegisterClick"/>

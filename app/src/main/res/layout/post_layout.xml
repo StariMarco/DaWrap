@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity"
     android:id="@+id/post_card"
-    android:visibility="visible"
+    android:visibility="gone"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -136,7 +136,7 @@
                         android:id="@+id/btn_comment"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@drawable/ic_mode_comment_black_24dp"
+                        android:src="@drawable/ic_comment_black_border"
                         android:background="@null"
                         android:scaleType="fitXY"
                         android:padding="5dp"/>
