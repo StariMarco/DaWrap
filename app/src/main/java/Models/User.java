@@ -1,9 +1,12 @@
 package Models;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.dawrap.CreateImagePost;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -139,6 +142,26 @@ public class User implements Serializable
                     {
                         Log.e("User", "Error while unfollowing this user!", task.getException());
                         follows.add(user.userId);
+                    }
+                });
+    }
+
+    public void updateUser(User newUser, Context context)
+    {
+        Map<String,Object> updates = new HashMap<>();
+        updates.put("username", newUser.username);
+        updates.put("description", newUser.description);
+
+        DataHelper.db.collection("users").document(DataHelper._currentUserEmail).update(updates)
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful())
+                    {
+                        DataHelper.updateUser(newUser);
+                        Toast.makeText(context, "User updated!", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(context, "Error while updating this user!", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

@@ -8,14 +8,12 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
-import com.alexzh.circleimageview.CircleImageView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -154,5 +152,12 @@ public class DataHelper
                     }
                     else Log.e(TAG, "Error getting saved posts", task.getException());
                 });
+    }
+
+    public static void updateUser(User user)
+    {
+        int index = _users.indexOf(getUserById(user.userId));
+        _users.set(index, user);
+        _currentUser = user;
     }
 }

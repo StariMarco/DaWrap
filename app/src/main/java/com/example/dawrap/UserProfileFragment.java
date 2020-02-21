@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,10 +24,13 @@ import androidx.fragment.app.Fragment;
 
 import com.alexzh.circleimageview.CircleImageView;
 import com.alexzh.circleimageview.ItemSelectedListener;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 
 import Models.User;
 import Singletons.DataHelper;
+
+import static android.app.Activity.RESULT_OK;
 
 public class UserProfileFragment extends Fragment implements View.OnClickListener
 {
@@ -35,6 +40,8 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     private Integer _currentFragmentId = R.id.my_posts_btn;
     private View _fragmentContainer, _myPostsUnderline, _savedPostsUnderline;
     private float _containerHeight;
+    private TextView _txtUsername;
+    private TextView _txtDescription;
 
     @Nullable
     @Override
@@ -53,6 +60,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         fragmentButtonsSetup(view, savedInstanceState);
 
         dropdownMenuSetup(view);
+
+        _txtUsername = view.findViewById(R.id.usr_lbl_username);
+        _txtDescription = view.findViewById(R.id.usr_description_txt);
     }
 
     private void userDataSetup(@NonNull View view)
@@ -128,6 +138,12 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             if (item.getItemId() == R.id.usr_edit_profile)
             {
                 Log.d("UserProfileFragment", "Edit Profile");
+
+                // Start activity -> Edit user
+                User currentUser = DataHelper.getCurrentUser();
+                Intent intent = new Intent(getActivity(), EditUserActivity.class);
+                intent.putExtra("USER", currentUser);
+                startActivityForResult(intent, 1);
                 return true;
             }
             else if (item.getItemId() == R.id.usr_logout)
@@ -143,6 +159,22 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         menuBtn.setOnClickListener(v -> {
             dropDownMenu.show();
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1 && resultCode == RESULT_OK)
+        {
+            User user = (User) data.getSerializableExtra("RESULT");
+            if(user != null)
+            {
+                DataHelper.getCurrentUser().updateUser(user, getContext());
+                _txtUsername.setText(user.getUsername());
+                _txtDescription.setText(user.getDescription());
+            }
+        }
     }
 
     @Override

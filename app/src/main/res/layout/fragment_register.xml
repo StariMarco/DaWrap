@@ -123,7 +123,6 @@
             android:layout_height="80dp"
             android:visibility="gone"
             android:scaleType="centerCrop"
-            android:src="@drawable/profile_img_test"
             android:layout_marginBottom="10dp"
             android:onClick="onPickProfileImageClick"/>
 

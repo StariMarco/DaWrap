@@ -240,6 +240,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             public void onDeleteClick(int position)
             {
                 Comment comment = postComments.get(position);
+                // TODO: Fix crash
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(PostCommentsActivity.this);
                 builder.setTitle("Delete comment");
@@ -276,7 +277,7 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         if(view.getId() == _draggableView.getId())
         {
             // Get the max Y position
-            if(_bottomPos == -1) _bottomPos = event.getRawY() + 1;
+            if(_bottomPos == -1) _bottomPos = event.getRawY() + 80;
 
             switch (event.getAction())
             {

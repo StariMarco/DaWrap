@@ -4,17 +4,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
@@ -22,13 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.alexzh.circleimageview.CircleImageView;
-import com.alexzh.circleimageview.ItemSelectedListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import Singletons.SystemHelper;
 
@@ -80,7 +72,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener
         });
 
         // Set default profile image
-        Bitmap defaultProfileImageBtimap = BitmapFactory.decodeResource(getResources(), R.drawable.profile_img_test);
+        Bitmap defaultProfileImageBtimap = BitmapFactory.decodeResource(getResources(), R.drawable.follower);
         _profileImg.setImageBitmap(SystemHelper.getCircularBitmap(defaultProfileImageBtimap));
     }
 

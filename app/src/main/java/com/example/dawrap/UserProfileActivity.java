@@ -8,9 +8,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alexzh.circleimageview.CircleImageView;
+import com.alexzh.circleimageview.ItemSelectedListener;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -73,7 +75,22 @@ public class UserProfileActivity extends AppCompatActivity
     private void userDataSetup()
     {
         // Profile image
-        DataHelper.downloadImageIntoView((findViewById(R.id.usr_profile_image)), _user.profileImage, TAG, R.drawable.profile_img_test);
+        CircleImageView profileImage = findViewById(R.id.usr_profile_image);
+        DataHelper.downloadImageIntoView(profileImage, _user.profileImage, TAG, R.drawable.profile_img_test);
+        profileImage.setOnItemSelectedClickListener(new ItemSelectedListener()
+        {
+            @Override
+            public void onSelected(View view)
+            {
+                return;
+            }
+
+            @Override
+            public void onUnselected(View view)
+            {
+                return;
+            }
+        });
         // username text
         ((TextView) findViewById(R.id.usr_username_txt)).setText(_user.username);
         // followers text

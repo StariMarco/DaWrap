@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditUserActivity">
+
+    <!--    Top Nav-->
+    <RelativeLayout
+        android:id="@+id/edit_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit Profile"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="@dimen/fontSizeTitle"
+            android:fontFamily="@font/roboto_bold"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/text_back_btn"
+            android:layout_marginLeft="10dp"
+            android:background="@null"/>
+
+        <ImageButton
+            android:id="@+id/text_back_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back_black_24dp"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:onClick="onBackBtnClick"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:fontFamily="@font/roboto_medium"
+            android:layout_marginRight="5dp"
+            android:onClick="onSaveChangesClick"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:layout_below="@+id/edit_title_layout">
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            app:boxCornerRadiusTopEnd="5dp"
+            app:boxCornerRadiusTopStart="5dp"
+            app:boxCornerRadiusBottomEnd="5dp"
+            app:boxCornerRadiusBottomStart="5dp"
+            app:endIconDrawable="@drawable/ic_cancel_black_24dp"
+            app:endIconMode="clear_text"
+            android:layout_marginBottom="10dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_username_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            app:boxCornerRadiusTopEnd="5dp"
+            app:boxCornerRadiusTopStart="5dp"
+            app:boxCornerRadiusBottomEnd="5dp"
+            app:boxCornerRadiusBottomStart="5dp"
+            app:endIconDrawable="@drawable/ic_cancel_black_24dp"
+            app:endIconMode="clear_text"
+            android:layout_marginBottom="10dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_description_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="1"
+                android:maxLines="10"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+</RelativeLayout>

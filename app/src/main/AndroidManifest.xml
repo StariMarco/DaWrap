@@ -11,26 +11,41 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".UserAuthenticationActivity" android:screenOrientation="portrait">
+        <activity android:name=".EditUserActivity" android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".UserAuthenticationActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateImagePost" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".CreateImagePost"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CreateTextPost"
-            android:parentActivityName=".MainActivity" android:screenOrientation="portrait"/>
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".UserProfileActivity"
-            android:parentActivityName=".PostActivity" android:screenOrientation="portrait"/>
+            android:parentActivityName=".PostActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".PostCommentsActivity"
-            android:parentActivityName=".PostActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".BackdropContentActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity" android:parentActivityName=".UserAuthenticationActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".PostActivity" android:screenOrientation="portrait"/>
+            android:parentActivityName=".PostActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".BackdropContentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:parentActivityName=".UserAuthenticationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PostActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

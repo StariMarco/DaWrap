@@ -3,10 +3,10 @@
 <!--    <color name="colorPrimary">#fc6e51</color>-->
 <!--    <color name="colorPrimaryDark">#e9573f</color>-->
 <!--    <color name="colorPrimaryLight">#fc8b73</color>-->
-    <color name="colorPrimary">#F9957F</color>
-    <color name="colorPrimaryDark">#ae6858</color>
-    <color name="colorPrimaryLight">#faaa98</color>
-    <color name="colorPrimaryLight2">#fbbbac</color>
+    <color name="colorPrimary">#33516E</color>
+    <color name="colorPrimaryDark">#23384d</color>
+    <color name="colorPrimaryLight">#5b738b</color>
+    <color name="colorPrimaryLight2">#7b8fa2</color>
     <color name="colorAccent">#F2F5D0</color>
     <color name="colorTextPrimary">#424242</color>
     <color name="colorTextSecondary">#757575</color>
