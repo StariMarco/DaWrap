@@ -147,7 +147,7 @@ private void transitionToFragment(Context context, final Fragment newFragment, @
 - Target API level: 29
 - Minimum API level: 16
 - IDE: Android Studio
-- Man-hours:
+- Man-hours: 50
 
 ## Problems and difficulties
 
