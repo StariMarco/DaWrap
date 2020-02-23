@@ -4,25 +4,25 @@ is a social network that allows people to satisfy their desire to get like by sh
 
 ## Features and component used inside the app
 
-[x] Activity
-[ ] Service
-[ ] Broadcast Receiver
-[ ] Content Provider
-[x] Intent: To pass data between activities
-[x] Fragments: 1. To move smoothly through home, create post and user profile 2. To move smoothly through the posts and the saved posts of the users
-[ ] Async Task
-[ ] Threads
-[ ] SQLite database engine
-[x] Firebase Cloud Firestore
-[x] Internet connectivity: to exchange data with the cloud service (firestore)
-[ ] Geo-location
-[ ] Localization
-[x] Multiple device layout and resolution support: smartphones and tablets
-[x] Hardware features: WiFi and camera
-[ ] Google Mobile Services
-[x] Web Application/Web Service interaction: 1. Firebase Auth 2. Cloud Firestore
-[x] Third party libraries: 1. Recyclerview: androidx.recyclerview:recyclerview:1.1.0 2. CiclerImageView: com.alexzh:circleimageview:1.2.0 3. Lottie: com.airbnb.android:lottie:3.3.1 4. Google Material Design: com.google.android.material:material:1.2.0-alpha02
-[x] Other embedded or involved technologies: 1. Image compression
+- [x] Activity: 7
+- [ ] Service
+- [ ] Broadcast Receiver
+- [ ] Content Provider
+- [x] Intent: To pass data between activities
+- [x] Fragments: 1. To move smoothly through home, create post and user profile 2. To move smoothly through the posts and the saved posts of the users
+- [ ] Async Task
+- [ ] Threads
+- [ ] SQLite database engine
+- [x] Firebase Cloud Firestore
+- [x] Internet connectivity: to exchange data with the cloud service (firestore)
+- [ ] Geo-location
+- [ ] Localization
+- [x] Multiple device layout and resolution support: smartphones and tablets
+- [x] Hardware features: WiFi and camera
+- [ ] Google Mobile Services
+- [x] Web Application/Web Service interaction: 1. Firebase Auth 2. Cloud Firestore
+- [x] Third party libraries: 1. Recyclerview: androidx.recyclerview:recyclerview:1.1.0 2. CiclerImageView: com.alexzh:circleimageview:1.2.0 3. Lottie: com.airbnb.android:lottie:3.3.1 4. Google Material Design: com.google.android.material:material:1.2.0-alpha02
+- [x] Other embedded or involved technologies: 1. Image compression
 
 ## Key Features
 
@@ -30,7 +30,7 @@ L'applicazione è studiata per essere utilizzata da tutti in modo facile ed intu
 Infine l'algoritmo di compressione delle immagini permette di memorizzare migliaia di post anche utilizzando solo il piano gratuito di Firebase.
 
 # App structure
-
+![GitHub Logo](/Usecase_diagram.png)
 
 ## Code Fragments
 
@@ -92,6 +92,72 @@ public Bitmap compressImage(Uri uriPhoto, Context context)
     }
 ```
 
+### Upload image post to firebase
+1 - Upload Image
+
+```
+private void uploadImageToFirestore()
+    {
+        // Compress the bitmap image into byte array
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        _imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+        byte[] data = baos.toByteArray();
+
+        // Get the image storage reference
+        StorageReference postImagesRef = DataHelper.storage.getReference().child("postImages/" + _uniqueId);
+
+        // Upload the image
+        UploadTask uploadTask = postImagesRef.putBytes(data);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            Log.d(TAG, "image uploaded successfully: " + taskSnapshot.getMetadata().getPath());
+            // Firebase Firestore
+            uploadPostToFirestore(_uniqueId, taskSnapshot.getMetadata().getPath());
+
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Failed to upload image: ", e);
+        }).addOnProgressListener(taskSnapshot -> {
+            // Get upload progress
+            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+            DecimalFormat df = new DecimalFormat("#0");
+            String progressTxt = "Uploading " + df.format(progress) + "%";
+            _uploadingText.setText(progressTxt);
+        });
+    }
+```
+
+2 - Upload Post document
+
+```
+private void uploadPostToFirestore(String uniqueId, String path)
+    {
+        Post newPost = new Post();
+        newPost.postId = uniqueId;
+        newPost.userId = DataHelper.getCurrentUser().userId;
+        newPost.title = _titleTxt.getText().toString();
+        newPost.description = null;
+        newPost.image = path;
+        newPost.likes = new ArrayList<String>();
+        newPost.comments = new ArrayList<Comment>();
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss", Locale.ENGLISH);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        newPost.creationDate = df.format(new Date());
+
+        DataHelper._posts.add(0, newPost);
+
+        DataHelper.db.collection("posts").document(uniqueId).set(newPost)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Post document added: " + uniqueId);
+                    _loadingCard.setVisibility(View.GONE);
+                    super.onBackPressed();
+                })
+                .addOnFailureListener(e -> {
+                    Log.d(TAG, "Error adding document", e);
+                    _loadingCard.setVisibility(View.GONE);
+                    super.onBackPressed();
+                });
+    }
+```
+
 ### Animate transition between fragments in MainActivity
 
 ```
@@ -147,15 +213,13 @@ private void transitionToFragment(Context context, final Fragment newFragment, @
 - Target API level: 29
 - Minimum API level: 16
 - IDE: Android Studio
-- Man-hours:
+- Man-hours: 50
 
 ## Problems and difficulties
 
 - In the Post comment activity, allowing the user to slide the image up and down to see more comments
 - Dealing with some bugs coming from the CiclerImageView
 - Reduce the size of the data to save
-
-## Reported bugs
 
 ## Further development
 
@@ -170,7 +234,7 @@ This project can be improved by:
 
 ## Self rating
 
-Since this was a school project i can give me 4 stars out of 5 because, for time constraints, I ignored many aspects and many possible bugs that in a real app would not be possible to ignore.
+Since this was a school project i can give me 4 stars out of 5, but, for time constraints, I ignored many aspects and many possible bugs that in a real app would not be acceptable.
 
 # References
 
