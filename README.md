@@ -4,7 +4,7 @@ is a social network that allows people to satisfy their desire to get like by sh
 
 ## Features and component used inside the app
 
-- [x] Activity
+- [x] Activity: 7
 - [ ] Service
 - [ ] Broadcast Receiver
 - [ ] Content Provider
@@ -92,6 +92,72 @@ public Bitmap compressImage(Uri uriPhoto, Context context)
     }
 ```
 
+### Upload image post to firebase
+1 - Upload Image
+
+```
+private void uploadImageToFirestore()
+    {
+        // Compress the bitmap image into byte array
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        _imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+        byte[] data = baos.toByteArray();
+
+        // Get the image storage reference
+        StorageReference postImagesRef = DataHelper.storage.getReference().child("postImages/" + _uniqueId);
+
+        // Upload the image
+        UploadTask uploadTask = postImagesRef.putBytes(data);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            Log.d(TAG, "image uploaded successfully: " + taskSnapshot.getMetadata().getPath());
+            // Firebase Firestore
+            uploadPostToFirestore(_uniqueId, taskSnapshot.getMetadata().getPath());
+
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Failed to upload image: ", e);
+        }).addOnProgressListener(taskSnapshot -> {
+            // Get upload progress
+            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+            DecimalFormat df = new DecimalFormat("#0");
+            String progressTxt = "Uploading " + df.format(progress) + "%";
+            _uploadingText.setText(progressTxt);
+        });
+    }
+```
+
+2 - Upload Post document
+
+```
+private void uploadPostToFirestore(String uniqueId, String path)
+    {
+        Post newPost = new Post();
+        newPost.postId = uniqueId;
+        newPost.userId = DataHelper.getCurrentUser().userId;
+        newPost.title = _titleTxt.getText().toString();
+        newPost.description = null;
+        newPost.image = path;
+        newPost.likes = new ArrayList<String>();
+        newPost.comments = new ArrayList<Comment>();
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss", Locale.ENGLISH);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        newPost.creationDate = df.format(new Date());
+
+        DataHelper._posts.add(0, newPost);
+
+        DataHelper.db.collection("posts").document(uniqueId).set(newPost)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Post document added: " + uniqueId);
+                    _loadingCard.setVisibility(View.GONE);
+                    super.onBackPressed();
+                })
+                .addOnFailureListener(e -> {
+                    Log.d(TAG, "Error adding document", e);
+                    _loadingCard.setVisibility(View.GONE);
+                    super.onBackPressed();
+                });
+    }
+```
+
 ### Animate transition between fragments in MainActivity
 
 ```
@@ -155,8 +221,6 @@ private void transitionToFragment(Context context, final Fragment newFragment, @
 - Dealing with some bugs coming from the CiclerImageView
 - Reduce the size of the data to save
 
-## Reported bugs
-
 ## Further development
 
 This project can be improved by:
@@ -170,7 +234,7 @@ This project can be improved by:
 
 ## Self rating
 
-Since this was a school project i can give me 4 stars out of 5 because, for time constraints, I ignored many aspects and many possible bugs that in a real app would not be possible to ignore.
+Since this was a school project i can give me 4 stars out of 5, but, for time constraints, I ignored many aspects and many possible bugs that in a real app would not be acceptable.
 
 # References
 
