@@ -240,7 +240,6 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
             public void onDeleteClick(int position)
             {
                 Comment comment = postComments.get(position);
-                // TODO: Fix crash
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(PostCommentsActivity.this);
                 builder.setTitle("Delete comment");
@@ -467,18 +466,31 @@ public class PostCommentsActivity extends AppCompatActivity implements View.OnTo
         builder.setTitle("Delete Post");
         builder.setMessage("Do you want to delete this post?");
         builder.setPositiveButton("Confirm", (dialog, which) -> {
-            DataHelper.storage.getReference().child(_post.image).delete()
-                    .addOnSuccessListener(aVoid -> {
-                        DataHelper.db.collection("posts").document(_post.postId).delete()
-                                .addOnSuccessListener(a -> {
-                                    DataHelper._posts.remove(_post);
-                                    super.onBackPressed();
-                                }).addOnFailureListener(e -> {
-                            Log.e(TAG, "Error in deleting the post", e);
-                        });
-                    }).addOnFailureListener(e -> {
-                        Toast.makeText(PostCommentsActivity.this, "Error while deleting the image!", Toast.LENGTH_SHORT).show();
-                    });
+            if(_post.image == null)
+            {
+                DataHelper.db.collection("posts").document(_post.postId).delete()
+                        .addOnSuccessListener(a -> {
+                            DataHelper._posts.remove(_post);
+                            super.onBackPressed();
+                        }).addOnFailureListener(e -> {
+                    Log.e(TAG, "Error in deleting the post", e);
+                });
+            }else
+            {
+
+                DataHelper.storage.getReference().child(_post.image).delete()
+                        .addOnSuccessListener(aVoid -> {
+                            DataHelper.db.collection("posts").document(_post.postId).delete()
+                                    .addOnSuccessListener(a -> {
+                                        DataHelper._posts.remove(_post);
+                                        super.onBackPressed();
+                                    }).addOnFailureListener(e -> {
+                                Log.e(TAG, "Error in deleting the post", e);
+                            });
+                        }).addOnFailureListener(e -> {
+                    Toast.makeText(PostCommentsActivity.this, "Error while deleting the image!", Toast.LENGTH_SHORT).show();
+                });
+            }
 
         });
 
