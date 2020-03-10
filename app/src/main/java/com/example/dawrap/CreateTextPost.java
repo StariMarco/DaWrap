@@ -29,7 +29,7 @@ public class CreateTextPost extends AppCompatActivity
 
     private TextInputEditText _titleTxt, _descriptionTxt;
     private MaterialButton _postBtn;
-    private final int TITLE_MAX_CHARS = 20, DESCRIPTION_MAX_CHARS = 100;
+    private final int TITLE_MAX_CHARS = 20, DESCRIPTION_MAX_CHARS = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
