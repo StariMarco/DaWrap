@@ -232,10 +232,6 @@ This project can be improved by:
 - Creating a chat message to share posts with other users
 - Create an iOS version
 
-## Self rating
-
-Since this was a school project i can give me 4 stars out of 5, but, for time constraints, I ignored many aspects and many possible bugs that in a real app would not be acceptable.
-
 # References
 
 www.google.it
